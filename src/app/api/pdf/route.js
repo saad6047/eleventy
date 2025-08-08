@@ -9,7 +9,7 @@ export async function GET() {
     const page = await browser.newPage();
 
     // Apna Next.js page load karo
-    await page.goto("http://localhost:3000", { waitUntil: "networkidle0" });
+    await page.goto("http://eleventy-phi-indol.vercel.app", { waitUntil: "networkidle0" });
 
     // Page evaluate — sirf block ka HTML render karna
     await page.evaluate(() => {
