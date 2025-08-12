@@ -27,7 +27,6 @@
         "lucide-react": "^0.441.0",
         "next": "15.2.3",
         "nextjs-toploader": "^3.7.15",
-        "puppeteer": "^24.16.0",
         "react": "^18",
         "react-dom": "^18",
         "react-intersection-observer": "^9.15.1"

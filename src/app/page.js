@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "nextjs-toploader/app";
-import { FileIcon, PlayCircle, Plus, Upload } from "lucide-react";
+import { ArrowLeft, CircleCheckBig, FileIcon, PlayCircle, Plus, Upload } from "lucide-react";
 import Cookies from "js-cookie";
 import axios from "axios";
 
@@ -48,18 +48,24 @@ import Q75GILQ01_Image from "../../public/images/Q75GILQ01.png";
 import Q75GILQ02_Image from "../../public/images/Q75GILQ02.png";
 
 import Navbar from "@/components/Navbar";
-import Spinner from "@/components/Spinner";
 import Popup from "@/components/Popup";
 import { fabricCodes, scrollToTop } from "@/utils/helpers";
 import useSession from "@/hooks/user/get-session";
 import configSettings from "../../config";
-import { getPrices } from "@/utils/pricingData";
 import OutputForm from "@/components/OutputForm";
+import SmallSpinner from "@/components/SmallSpinner";
+import UploadDataModal from "@/components/UploadDataModal";
 
 const Home = () => {
     const session = useSession();
 
+    const [uploadDataModal, setUploadDataModal] = useState(false);
+
     const [currentScreen, setCurrentScreen] = useState("order_information");
+
+    const [prices, setPrices] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const [form, setForm] = useState({
         orderDetails: { date: "", store: "", associate: "", clientName: "", promiseDate: "", orderNumber: "" },
@@ -119,7 +125,7 @@ const Home = () => {
     const showPopup = (type, text) => {
         setPopupDetail({ type, text });
         setIsPopup(true);
-        setTimeout(() => setIsPopup(false), 3000);
+        setTimeout(() => setIsPopup(false), 4000);
     };
 
     const handleFileUpload = async (e) => {
@@ -225,27 +231,156 @@ const Home = () => {
         return true;
     };
 
+    const confirmOrder = async () => {
+        try {
+            setIsSpinner(true);
+
+            const uploadedPhotos = [];
+
+            if (attachedPhotos?.length > 0) {
+                // upload documents
+                const formData = new FormData();
+
+                for (let i = 0; i < attachedPhotos.length; i++) {
+                    formData.append(`files[${i}]`, attachedPhotos[i].file);
+                }
+
+                const result = await axios.post(configSettings.publicServerUrl + `/uploadFiles`, formData, {
+                    headers: {
+                        "access-token": Cookies.get("access-token"),
+                        "content-type": "multipart/form/data",
+                    },
+                });
+
+                const response = await result.data;
+
+                // Construct uploaded documents
+                for (let i = 0; i < response.filePaths.length; i++) {
+                    uploadedPhotos.push(response.filePaths[i]);
+                }
+            }
+
+            await axios.post(
+                configSettings.publicServerUrl + `/confirmOrder`,
+                {
+                    html: document.getElementById("pdf-block").outerHTML, // just raw string
+                    orderDetails: form,
+                    uploadedPhotos: uploadedPhotos,
+                },
+                {
+                    headers: {
+                        "access-token": Cookies.get("access-token"),
+                        "Content-Type": "application/json", // JSON content type
+                    },
+                }
+            );
+
+            setIsSpinner(false);
+
+            showPopup("Success", "Order has been successfully confirmed");
+
+            setCartItems([]);
+            setSelectedProduct({
+                productImage: "",
+                model: "",
+                fabricCode: "",
+                fabricColor: "",
+                testingSize: "",
+                liningStyle: "",
+                buttonStyle: "",
+                buttonColor: "",
+                handmadeButtonholes: "",
+            });
+            setForm({
+                orderDetails: { date: "", store: "", associate: "", clientName: "", promiseDate: "", orderNumber: "" },
+                monogram: { required: "Yes", text: "", side: "", color: "", font: "" },
+                jacketDetails: {
+                    jacketLength: "",
+                    sleeveLength: "",
+                    halfWaistCircumference: "",
+                    totalShoulderWidth: "",
+                    shouldersDifference: { leftCmLess: "", rightCmLess: "" },
+                    removeCreaseUnderCollar: "",
+                    halfArmholeWidth: "",
+                    removeQuills: "",
+                    curvedReversed: "",
+                    takeInCollar: "",
+                    loosenFrontJacketWidth: "",
+                    loosenChestWidth: "",
+                },
+                pantDetails: {
+                    thighAndKneeDiameter: { halfThigh: "", halfKnee: "", halfCalf: "" },
+                    halfWaistDiameter: "",
+                    halfPelvisDiameter: { measurement: "", YesNo: "" },
+                    loosenBottom: { length: "", bottom: "" },
+                    raiseLowerWaist: { moreHigh: "", lessLow: "" },
+                    crotchLength: "",
+                    lowerRiseAtFront: "",
+                },
+                additionalNotes: "",
+            });
+
+            setCurrentScreen("order_information");
+        } catch (error) {
+            setIsSpinner(false);
+            console.log(error);
+        }
+    };
+
+    // Fetch prices when selectedProduct changes
+    useEffect(() => {
+        const fetchPrices = async () => {
+            if (selectedProduct?.model && selectedProduct?.fabricCode) {
+                try {
+                    setLoading(true);
+                    setError(null);
+
+                    const response = await fetch(configSettings?.serverUrl + "/getPrices", {
+                        method: "POST",
+                        headers: {
+                            "access-token": Cookies.get("access-token"),
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            model: selectedProduct?.model,
+                            fabric: selectedProduct?.fabricCode,
+                        }),
+                    });
+
+                    if (!response.ok) throw new Error("Price lookup failed");
+
+                    const data = await response.json();
+                    setPrices(data);
+                } catch (err) {
+                    setError(err.message);
+                    setPrices(null);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchPrices();
+    }, [selectedProduct?.model, selectedProduct?.fabricCode]);
+
+    useEffect(() => {
+        if (!session?.data && !session?.isLoading) {
+            router.push("/admin");
+        }
+    }, [session?.data, session?.isLoading]);
+
     return (
         <>
             {/* top navbar component */}
             <Navbar cartItems={cartItems} setCartItems={setCartItems} />
 
-            <button
-                onClick={() => {
-                    window.open("/api/pdf", "_blank");
-                }}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-                Download PDF
-            </button>
-
-            <OutputForm />
+            <OutputForm form={form} cartItems={cartItems} />
 
             {currentScreen === "order_information" ? (
                 <div className="relative flex flex-col max-w-3xl w-full mx-auto py-12 pt-4">
                     <h1 className="text-3xl md:text-4xl font-rouben-bold text-[#313131] text-center mt-12 mb-8">Order Information</h1>
 
-                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 px-6 lg:px-8">
+                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 px-4 lg:px-8">
                         <div className="flex-1 flex flex-col space-y-4 mt-12 4lg:mt-0 font-rouben-regular">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-x-3">
                                 <div className="flex-1 mb-4 md:mb-0">
@@ -379,7 +514,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5">
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         const isValid = validateOrderDetails();
 
@@ -394,15 +529,26 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
+
+                    <div className="flex items-center justify-center w-full font-rouben-semi-bold mt-12">
+                        <p
+                            className="text-primary text-[15px] cursor-pointer hover:underline"
+                            onClick={() => {
+                                setUploadDataModal(true);
+                            }}
+                        >
+                            Click here to upload/update pricing data
+                        </p>
+                    </div>
                 </div>
             ) : currentScreen === "monogram" ? (
                 <div className="relative flex flex-col max-w-3xl w-full mx-auto py-12 pt-4">
                     <h1 className="text-3xl md:text-4xl font-rouben-bold text-[#313131] text-center mt-12 mb-8">Monogram</h1>
 
-                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 sm:px-6 lg:px-8">
+                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 px-4 lg:px-8">
                         <div className="flex-1 flex flex-col space-y-4 mt-12 4lg:mt-0 font-rouben-regular">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-x-3">
-                                <div className="flex-1 mb-4 md:mb-0">
+                                <div className="flex-1">
                                     <p className="text-[#313131] mb-2">Monogram? *</p>
 
                                     <select
@@ -543,7 +689,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("order_information");
                                         scrollToTop();
@@ -553,7 +699,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         const isValid = validateMonogramDetails();
 
@@ -609,7 +755,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("monogram");
                                         scrollToTop();
@@ -619,7 +765,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.jacketDetails?.jacketLength) {
                                             showPopup("Warning", "Please enter the value first before proceeding");
@@ -674,7 +820,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("jacket_length");
                                         scrollToTop();
@@ -684,7 +830,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.jacketDetails?.sleeveLength) {
                                             showPopup("Warning", "Please enter the value first before proceeding");
@@ -740,7 +886,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("sleeve_length");
                                         scrollToTop();
@@ -750,7 +896,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.jacketDetails?.halfWaistCircumference) {
                                             showPopup("Warning", "Please enter the value first before proceeding");
@@ -805,7 +951,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("half_waist_circumference");
                                         scrollToTop();
@@ -815,7 +961,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.jacketDetails?.totalShoulderWidth) {
                                             showPopup("Warning", "Please enter the value first before proceeding");
@@ -848,7 +994,7 @@ const Home = () => {
                                 </div>
 
                                 <div className="flex flex-col sm:items-center gap-x-3 gap-y-4 w-full md:w-fit">
-                                    <div className="flex-1 mb-4 md:mb-0">
+                                    <div className="flex-1">
                                         <p className="text-[#313131] mb-2">Left CM Less</p>
                                         <input
                                             type="text"
@@ -896,7 +1042,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("total_shoulder_width");
                                         scrollToTop();
@@ -906,7 +1052,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("remove_crease_under_collar");
                                         scrollToTop();
@@ -957,7 +1103,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("shoulders_difference");
                                         scrollToTop();
@@ -967,7 +1113,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("half_armhole_width");
                                         scrollToTop();
@@ -1020,7 +1166,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("remove_crease_under_collar");
                                         scrollToTop();
@@ -1030,7 +1176,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.jacketDetails?.halfArmholeWidth) {
                                             showPopup("Warning", "Please enter the value first before proceeding");
@@ -1086,7 +1232,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("half_armhole_width");
                                         scrollToTop();
@@ -1096,7 +1242,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("curved_reversed");
                                         scrollToTop();
@@ -1149,7 +1295,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("remove_quills");
                                         scrollToTop();
@@ -1159,7 +1305,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("take_in_collar");
                                         scrollToTop();
@@ -1211,7 +1357,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("curved_reversed");
                                         scrollToTop();
@@ -1221,7 +1367,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("loosen_front_jacket_width");
                                         scrollToTop();
@@ -1272,7 +1418,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("take_in_collar");
                                         scrollToTop();
@@ -1282,7 +1428,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.jacketDetails?.loosenFrontJacketWidth) {
                                             showPopup("Warning", "Please enter the value first before proceeding");
@@ -1338,7 +1484,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("loosen_front_jacket_width");
                                         scrollToTop();
@@ -1348,7 +1494,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("thigh_and_knee_diameter");
                                         scrollToTop();
@@ -1378,7 +1524,7 @@ const Home = () => {
                                 </div>
 
                                 <div className="flex flex-col sm:items-center gap-x-3 gap-y-4 w-full md:w-fit">
-                                    <div className="flex-1 mb-4 md:mb-0">
+                                    <div className="flex-1">
                                         <p className="text-[#313131] mb-2">CM + / -</p>
                                         <input
                                             type="text"
@@ -1400,7 +1546,7 @@ const Home = () => {
                                         />
                                     </div>
 
-                                    <div className="flex-1 mb-4 md:mb-0">
+                                    <div className="flex-1">
                                         <p className="text-[#313131] mb-2">CM + / -</p>
                                         <input
                                             type="text"
@@ -1448,7 +1594,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("loosen_chest_width");
                                         scrollToTop();
@@ -1458,7 +1604,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (
                                             !form?.pantDetails?.thighAndKneeDiameter?.halfThigh ||
@@ -1518,7 +1664,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("thigh_and_knee_diameter");
                                         scrollToTop();
@@ -1528,7 +1674,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.pantDetails?.halfWaistDiameter) {
                                             showPopup("Warning", "Please enter the value first before proceeding");
@@ -1562,7 +1708,7 @@ const Home = () => {
                                 </div>
 
                                 <div className="flex flex-col gap-x-3 gap-y-4 w-full md:w-fit">
-                                    <div className="flex-1 mb-4 md:mb-0">
+                                    <div className="flex-1">
                                         <p className="text-[#313131] mb-2">CM + / -</p>
                                         <input
                                             type="text"
@@ -1616,7 +1762,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("half_waist_diameter");
                                         scrollToTop();
@@ -1626,7 +1772,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.pantDetails?.halfPelvisDiameter?.measurement || !form?.pantDetails?.halfPelvisDiameter?.YesNo) {
                                             showPopup("Warning", "Please enter both values first before proceeding");
@@ -1659,7 +1805,7 @@ const Home = () => {
                                 </div>
 
                                 <div className="flex flex-col gap-x-3 gap-y-4 w-full md:w-fit">
-                                    <div className="flex-1 mb-4 md:mb-0">
+                                    <div className="flex-1">
                                         <p className="text-[#313131] mb-2">Length CM + / -</p>
                                         <input
                                             type="text"
@@ -1707,7 +1853,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("half_pelvis_diameter");
                                         scrollToTop();
@@ -1717,7 +1863,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!form?.pantDetails?.loosenBottom?.length || !form?.pantDetails?.loosenBottom?.bottom) {
                                             showPopup("Warning", "Please enter both values first before proceeding");
@@ -1749,7 +1895,7 @@ const Home = () => {
                                 </div>
 
                                 <div className="flex flex-col gap-x-3 gap-y-4 w-full md:w-fit">
-                                    <div className="flex-1 mb-4 md:mb-0">
+                                    <div className="flex-1">
                                         <p className="text-[#313131] mb-2">More High CM + / -</p>
                                         <input
                                             type="text"
@@ -1797,7 +1943,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("loosen_bottom");
                                         scrollToTop();
@@ -1807,7 +1953,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("crotch_length");
                                         scrollToTop();
@@ -1859,7 +2005,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("raise_lower_waist");
                                         scrollToTop();
@@ -1869,7 +2015,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("lower_rise_at_front");
                                         scrollToTop();
@@ -1921,7 +2067,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("crotch_length");
                                         scrollToTop();
@@ -1931,7 +2077,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("choose_product");
                                         scrollToTop();
@@ -1945,9 +2091,9 @@ const Home = () => {
                 </div>
             ) : currentScreen === "choose_product" ? (
                 <div className="relative flex flex-col max-w-5xl w-full mx-auto px-4 py-12 pt-4 h-[calc(100vh-105px)] items-center justify-center">
-                    <div className="flex items-center justify-between w-full gap-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col md:flex-row items-center justify-between w-full gap-4 sm:px-6 lg:px-8">
                         <button
-                            className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                            className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                             onClick={() => {
                                 setCurrentScreen("select_jacket");
                                 scrollToTop();
@@ -1959,7 +2105,7 @@ const Home = () => {
                         </button>
 
                         <button
-                            className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                            className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                             onClick={() => {
                                 setCurrentScreen("select_pant");
                                 scrollToTop();
@@ -1971,7 +2117,7 @@ const Home = () => {
                         </button>
 
                         <button
-                            className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                            className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                             onClick={() => {
                                 setCurrentScreen("select_vest");
                                 scrollToTop();
@@ -1986,7 +2132,7 @@ const Home = () => {
                     <div className="absolute bottom-12">
                         <div className="flex items-center justify-center gap-2">
                             <button
-                                className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                 onClick={() => {
                                     setCurrentScreen("lower_rise_at_front");
                                     scrollToTop();
@@ -1996,7 +2142,7 @@ const Home = () => {
                             </button>
 
                             <button
-                                className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                 onClick={() => {
                                     if (cartItems?.length === 0) {
                                         showPopup("Warning", "Please add at least one item to your cart before proceeding");
@@ -2082,7 +2228,7 @@ const Home = () => {
 
                     <div className="mt-16">
                         <button
-                            className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                            className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                             onClick={() => {
                                 setCurrentScreen("choose_product");
                                 scrollToTop();
@@ -2096,7 +2242,7 @@ const Home = () => {
                 <div className="relative flex flex-col max-w-3xl w-full mx-auto py-12 pt-4">
                     <h1 className="text-3xl md:text-4xl font-rouben-bold text-[#313131] text-center mt-12 mb-8">Fabric & Styles</h1>
 
-                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 sm:px-6 lg:px-8">
+                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 px-4 lg:px-8">
                         <div className="flex-1 flex flex-col space-y-4 mt-12 4lg:mt-0 font-rouben-regular">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-x-3">
                                 <div className="flex-1 mb-4 md:mb-0">
@@ -2259,7 +2405,7 @@ const Home = () => {
                             </div>
 
                             <div className="flex flex-col sm:flex-row sm:items-center gap-x-3">
-                                <div className="flex-1 mb-4 md:mb-0">
+                                <div className="flex-1">
                                     <p className="text-[#313131] mb-2">Handmade Buttonholes *</p>
 
                                     <select
@@ -2286,7 +2432,7 @@ const Home = () => {
                                     <input
                                         type="text"
                                         className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                        value={getPrices(selectedProduct?.model, selectedProduct?.fabricCode)?.usaPrice}
+                                        value={loading ? "Loading..." : error ? "Price unavailable" : prices?.usaPrice || ""}
                                         readOnly
                                     />
                                 </div>
@@ -2297,7 +2443,7 @@ const Home = () => {
                                     <input
                                         type="text"
                                         className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                        value={getPrices(selectedProduct?.model, selectedProduct?.fabricCode)?.caPrice}
+                                        value={loading ? "Loading..." : error ? "Price unavailable" : prices?.caPrice || ""}
                                         readOnly
                                     />
                                 </div>
@@ -2305,7 +2451,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (selectedProduct?.model === "Q75GILQ01" || selectedProduct?.model === "Q75GILQ02") {
                                             setCurrentScreen("select_vest");
@@ -2321,6 +2467,9 @@ const Home = () => {
                                                 buttonColor: "",
                                                 handmadeButtonholes: "",
                                             });
+
+                                            setPrices(null);
+                                            setError(null);
                                         } else {
                                             setCurrentScreen("select_jacket");
                                             scrollToTop();
@@ -2335,6 +2484,9 @@ const Home = () => {
                                                 buttonColor: "",
                                                 handmadeButtonholes: "",
                                             });
+
+                                            setPrices(null);
+                                            setError(null);
                                         }
                                     }}
                                 >
@@ -2342,7 +2494,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (
                                             !selectedProduct?.fabricCode ||
@@ -2462,7 +2614,7 @@ const Home = () => {
 
                     <div className="mt-16">
                         <button
-                            className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                            className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                             onClick={() => {
                                 setCurrentScreen("choose_product");
                                 scrollToTop();
@@ -2476,7 +2628,7 @@ const Home = () => {
                 <div className="relative flex flex-col max-w-3xl w-full mx-auto py-12 pt-4">
                     <h1 className="text-3xl md:text-4xl font-rouben-bold text-[#313131] text-center mt-12 mb-8">Fabric & Styles</h1>
 
-                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 sm:px-6 lg:px-8">
+                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 px-4 lg:px-8">
                         <div className="flex-1 flex flex-col space-y-4 mt-12 4lg:mt-0 font-rouben-regular">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-x-3">
                                 <div className="flex-1 mb-4 md:mb-0">
@@ -2537,7 +2689,7 @@ const Home = () => {
                             </div>
 
                             <div className="flex flex-col sm:flex-row sm:items-center gap-x-3">
-                                <div className="flex-1 mb-4 md:mb-0">
+                                <div className="flex-1">
                                     <p className="text-[#313131] mb-2">Testing Size *</p>
 
                                     <select
@@ -2572,7 +2724,7 @@ const Home = () => {
                                     <input
                                         type="text"
                                         className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                        value={getPrices(selectedProduct?.model, selectedProduct?.fabricCode)?.usaPrice}
+                                        value={loading ? "Loading..." : error ? "Price unavailable" : prices?.usaPrice || ""}
                                         readOnly
                                     />
                                 </div>
@@ -2583,7 +2735,7 @@ const Home = () => {
                                     <input
                                         type="text"
                                         className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                        value={getPrices(selectedProduct?.model, selectedProduct?.fabricCode)?.caPrice}
+                                        value={loading ? "Loading..." : error ? "Price unavailable" : prices?.caPrice || ""}
                                         readOnly
                                     />
                                 </div>
@@ -2591,7 +2743,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("select_pant");
                                         scrollToTop();
@@ -2606,13 +2758,16 @@ const Home = () => {
                                             buttonColor: "",
                                             handmadeButtonholes: "",
                                         });
+
+                                        setPrices(null);
+                                        setError(null);
                                     }}
                                 >
                                     <span className="font-rouben-semi-bold uppercase">Back</span>
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         if (!selectedProduct?.fabricCode || !selectedProduct?.fabricCode || !selectedProduct?.testingSize) {
                                             showPopup("Warning", "Please fill all the required fields first before proceeding");
@@ -2682,7 +2837,7 @@ const Home = () => {
 
                     <div className="mt-16 md:mt-32">
                         <button
-                            className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                            className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                             onClick={() => {
                                 setCurrentScreen("choose_product");
                                 scrollToTop();
@@ -2779,7 +2934,7 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("choose_product");
                                         scrollToTop();
@@ -2789,7 +2944,7 @@ const Home = () => {
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                     onClick={() => {
                                         setCurrentScreen("additional_notes");
                                         scrollToTop();
@@ -2805,7 +2960,7 @@ const Home = () => {
                 <div className="relative flex flex-col max-w-3xl w-full mx-auto py-12 pt-4">
                     <h1 className="text-3xl md:text-4xl font-rouben-bold text-[#313131] text-center mt-12 mb-8">Additional Notes</h1>
 
-                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 sm:px-6 lg:px-8">
+                    <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 px-4 lg:px-8">
                         <div className="flex-1 flex flex-col space-y-4 mt-12 4lg:mt-0 font-rouben-regular">
                             <div className="flex flex-col sm:flex-row sm:items-center gap-x-3">
                                 <div className="flex-1 mb-4 md:mb-0">
@@ -2825,23 +2980,45 @@ const Home = () => {
 
                             <div className="flex items-center justify-end mt-5 gap-2">
                                 <button
-                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    className={`bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 ${
+                                        isSpinner ? "cursor-not-allowed opacity-90" : "cursor-pointer hover:opacity-95"
+                                    }`}
+                                    disabled={isSpinner}
                                     onClick={() => {
                                         setCurrentScreen("attach_photos");
                                         scrollToTop();
                                     }}
                                 >
-                                    <span className="font-rouben-semi-bold uppercase">Back</span>
+                                    <span className="font-rouben-semi-bold uppercase flex items-center justify-center">
+                                        <>
+                                            <ArrowLeft className="mr-4 w-5 h-5" />
+                                            Back
+                                        </>
+                                    </span>
                                 </button>
 
                                 <button
-                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
-                                    onClick={() => {
-                                        alert("Order confirmed");
-                                        console.log(form);
-                                    }}
+                                    className={`bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary p-4 px-6 transition-all duration-300 ${
+                                        isSpinner ? "cursor-not-allowed opacity-90" : "cursor-pointer hover:opacity-95"
+                                    }`}
+                                    onClick={confirmOrder}
+                                    disabled={isSpinner}
+                                    aria-busy={isSpinner}
+                                    aria-label={isSpinner ? "Generating preview" : "Preview"}
                                 >
-                                    <span className="font-rouben-semi-bold uppercase">Confirm</span>
+                                    <span className="font-rouben-semi-bold uppercase flex items-center justify-center">
+                                        {isSpinner ? (
+                                            <>
+                                                <SmallSpinner marginRight="mr-4" />
+                                                Confirm
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CircleCheckBig className="mr-4 w-5 h-5" />
+                                                Confirm
+                                            </>
+                                        )}
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -2849,12 +3026,8 @@ const Home = () => {
                 </div>
             ) : null}
 
-            {isSpinner && (
-                <>
-                    <div className="fixed top-0 left-0 w-full h-full bg-black opacity-50 z-[70]"></div>
-                    <Spinner />
-                </>
-            )}
+            {/* Upload pricing data modal */}
+            <UploadDataModal uploadDataModal={uploadDataModal} setUploadDataModal={setUploadDataModal} />
 
             <Popup type={popupDetail?.type} text={popupDetail?.text} isPopup={isPopup} />
         </>

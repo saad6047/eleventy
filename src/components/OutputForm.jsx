@@ -1,1140 +1,3623 @@
-import Image from "next/image";
+const jacketVestModels = ["Q75GIAQ03", "Q75GIAQ05", "Q75GIAQ01", "Q75GIAQ04", "Q75GIAQ02", "Q75GILQ01", "Q75GILQ02"];
+const pantModels = ["Q75PANQ01", "Q75PANQ02", "Q75PANQ05", "Q75PANQ04", "Q75PANQ03"];
 
-import logo from "../../public/images/logo.png";
+export default function OutputForm({ form, cartItems }) {
+    const getJacketsFromCart = () => {
+        return cartItems.filter((item) => jacketVestModels.includes(item.model));
+    };
 
-import jacketLengthImage from "../../public/images/jacket-length.png";
-import sleeveLengthImage from "../../public/images/sleeve-length.png";
-import halfWaistCircumferenceImage from "../../public/images/half-waist-circumference.png";
-import totalShoulderWidthImage from "../../public/images/total-shoulder-width.png";
-import shouldersDifferenceImage from "../../public/images/shoulder-difference.png";
-import removeCreaseUnderCollarImage from "../../public/images/crease-under-collar.png";
-import halfArmholeWidthImage from "../../public/images/half-armhole-width.png";
-import removeQuillsImage from "../../public/images/remove-quills.png";
-import curvedReversedImage from "../../public/images/curved-reversed.png";
-import takeInCollarImage from "../../public/images/take-in-collar.png";
-import loosenFrontJacketWidthImage from "../../public/images/loosen-front-jacket-width.png";
-import loosenChestWidthImage from "../../public/images/loosen-chest-width.png";
-import thighAndKneeDiameterImage from "../../public/images/thigh-&-knee-diameter.png";
-import halfWaistDiameterImage from "../../public/images/half-waist-diameter.png";
-import halfPelvisDiameterImage from "../../public/images/half-pelvis-diameter.png";
-import loosenBottomImage from "../../public/images/loosen-bottom.png";
-import raiseLowerWaistImage from "../../public/images/raise-lower-waist.png";
-import crotchLengthImage from "../../public/images/crotch-length.png";
-import lowerRiseAtFrontImage from "../../public/images/lower-rise-at-front.png";
+    const getPantsFromCart = () => {
+        return cartItems.filter((item) => pantModels.includes(item.model));
+    };
 
-export default function OutputForm() {
     return (
-        <div id="pdf-block" className="mx-auto p-8 pt-0 font-rouben-regular">
-            {/* Top Header */}
-            <div className="flex items-center justify-center mb-4">
-                <Image alt="" src={logo} className="w-16" />
+        <>
+            <style>{`
+                @font-face {
+                    font-family: 'Rouben-regular';
+                    src: url('${process.env.NEXT_PUBLIC_BASE_URL}/fonts/rouben-regular.otf') format('opentype');
+                    font-weight: normal;
+                    font-style: normal;
+                }
+                #pdf-block {
+                    font-family: 'Rouben-regular', sans-serif;
+                }
+            `}</style>
+
+            <div
+                id="pdf-block"
+                style={{
+                    display: "none",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    padding: "2rem",
+                    paddingTop: 0,
+                }}
+            >
+                {/* Top Header */}
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "1rem",
+                    }}
+                >
+                    <img
+                        alt=""
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/logo.png`}
+                        style={{
+                            width: "4rem",
+                        }}
+                    />
+                </div>
+
+                {/* Header */}
+                <div style={{ display: "flex" }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: "0.875rem",
+                            marginRight: "3rem",
+                        }}
+                    >
+                        <span style={{ marginRight: "12px", marginTop: "10px" }}>NAME + LAST NAME:</span>
+                        <span
+                            style={{
+                                borderBottom: "1px solid black",
+                                width: "200px",
+                                textAlign: "center",
+                                color: "#000000",
+                            }}
+                        >
+                            {form?.orderDetails?.clientName}
+                        </span>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", fontSize: "14px" }}>
+                        <span style={{ marginRight: "12px", marginTop: "10px" }}>DATE:</span>
+                        <span
+                            style={{
+                                borderBottom: "1px solid black",
+                                width: "150px",
+                                textAlign: "center",
+                                color: "#000000",
+                            }}
+                        >
+                            {form?.orderDetails?.date}
+                        </span>
+                    </div>
+                </div>
+
+                <div style={{ display: "flex" }}>
+                    <div style={{ flex: "1" }}>
+                        {/* Headings Row */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderTop: "1px solid",
+                                borderBottom: "1px solid",
+                                marginTop: "0.5rem",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", flex: "1", alignItems: "center", justifyContent: "center", borderRight: "1px solid" }}>
+                                <span>STYLE</span>
+                            </div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                }}
+                            >
+                                <span>FABRIC</span>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <span style={{ borderRight: "1px solid", paddingRight: "12px", paddingLeft: "12px" }}>STYLE</span>
+                                    <span style={{ paddingRight: "12px", paddingLeft: "12px" }}>COLOR</span>
+                                </div>
+                            </div>
+                            <div
+                                style={{ display: "flex", width: "100px", alignItems: "center", justifyContent: "center", borderRight: "1px solid" }}
+                            >
+                                <span>
+                                    TESTING <br /> SIZE
+                                </span>
+                            </div>
+                            <div
+                                style={{ display: "flex", width: "100px", alignItems: "center", justifyContent: "center", borderRight: "1px solid" }}
+                            >
+                                <span>
+                                    STYLE <br /> LINING
+                                </span>
+                            </div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                }}
+                            >
+                                <span>BUTTON</span>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <span style={{ borderRight: "1px solid", paddingRight: "12px", paddingLeft: "12px" }}>STYLE</span>
+                                    <span style={{ paddingRight: "12px", paddingLeft: "12px" }}>COLOR</span>
+                                </div>
+                            </div>
+                            <div style={{ display: "flex", width: "150px", alignItems: "center", justifyContent: "center" }}>
+                                <span>
+                                    HANDMADE <br /> BUTTONHOLES
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Values Row */}
+                        {/* Jacket product 1 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[0]?.model}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[0]?.fabricCode}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[0]?.fabricColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "100px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[0]?.testingSize}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "100px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[0]?.liningStyle}
+                                </span>
+                            </div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[0]?.buttonStyle}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[0]?.buttonColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[0]?.handmadeButtonholes}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Jacket product 2 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[1]?.model}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[1]?.fabricCode}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[1]?.fabricColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "100px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[1]?.testingSize}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "100px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[1]?.liningStyle}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[1]?.buttonStyle}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[1]?.buttonColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[1]?.handmadeButtonholes}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Jacket product 3 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[2]?.model}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[2]?.fabricCode}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[2]?.fabricColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "100px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[2]?.testingSize}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "100px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[2]?.liningStyle}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[2]?.buttonStyle}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[2]?.buttonColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[2]?.handmadeButtonholes}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Jacket product 4 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[3]?.model}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[3]?.fabricCode}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[3]?.fabricColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "100px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[3]?.testingSize}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "100px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[3]?.liningStyle}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[3]?.buttonStyle}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[3]?.buttonColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getJacketsFromCart()[3]?.handmadeButtonholes}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Headings Row 2 monogram */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>EMBROIDERY</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>EMBROIDERY POSITION</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>EMBROIDERY TEXT</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>FONT</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span>COLOR</span>
+                            </div>
+                        </div>
+
+                        {/* Monogram values 4 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem", // text-xs (12px)
+                                lineHeight: "1rem", // text-xs line-height
+                                display: "flex", // flex
+                                borderBottom: "1px solid", // border-b
+                                borderColor: "inherit", // default border color
+                                height: "32px", // h-[32px]
+                            }}
+                        >
+                            {/* First Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000", // text-green-600
+                                        overflow: "hidden", // overflow-hidden
+                                        wordBreak: "break-word", // break-words
+                                    }}
+                                >
+                                    {form?.monogram?.required}
+                                </span>
+                            </div>
+
+                            {/* Second Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.side}
+                                </span>
+                            </div>
+
+                            {/* Third Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.text}
+                                </span>
+                            </div>
+
+                            {/* Fourth Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%", // flex-1
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.font}
+                                </span>
+                            </div>
+
+                            {/* Fifth Column (no right border) */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.color}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* General notes */}
+                        <div
+                            style={{
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "50px",
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                            }}
+                        >
+                            {/* First Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>
+                                    GENERAL
+                                    <br />
+                                    NOTES
+                                </span>
+                            </div>
+
+                            {/* Second Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "flex-start",
+                                    paddingLeft: "1rem",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        fontSize: "0.75rem",
+                                        lineHeight: "1rem",
+                                    }}
+                                >
+                                    {form?.additionalNotes}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Attachements */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "40px",
+                            }}
+                        >
+                            {/* First Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                    lineHeight: "1.25rem",
+                                }}
+                            >
+                                <span>ATTACHMENTS</span>
+                            </div>
+
+                            {/* Second Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "flex-start",
+                                    paddingLeft: "1rem",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        fontSize: "0.75rem",
+                                        lineHeight: "1rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    ATTACH PICTURE OF: FRONT, BACK, SIDE - IN COMPLIANCE WITH THE PRIVACY POLICY AVOID PICTURING THE CUSTOMER'S FACE
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style={{
+                            width: "350px",
+                            borderLeft: "1px solid",
+                            borderTop: "1px solid",
+                            display: "flex",
+                            flexDirection: "column",
+                            marginTop: "8px",
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "33px",
+                                maxHeight: "33px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                boxSizing: "border-box",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span>STORE</span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        marginLeft: "2rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.orderDetails?.store}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        ></div>
+
+                        {/* ORDER # */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>ORDER #</span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        marginLeft: "2rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.orderDetails?.orderNumber}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* PAGE */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>PAGE</span>
+                            </div>
+                        </div>
+
+                        {/* VITERBO'S ORDER NUMBER # */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>VITERBO'S ORDER NUMBER #</span>
+                            </div>
+                        </div>
+
+                        {/* PRICING LIST */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>PRICING LIST</span>
+                            </div>
+                        </div>
+
+                        {/* SALES PERSON */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>SALES PERSON</span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        marginLeft: "2rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.orderDetails?.associate}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* BOUTIQUE DELIVERY ADDRESS */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>BOUTIQUE DELIVERY ADDRESS</span>
+                            </div>
+                        </div>
+
+                        {/* Empty row with text-sm */}
+                        <div
+                            style={{
+                                fontSize: "0.875rem",
+                                lineHeight: "1.25rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        ></div>
+
+                        {/* Final empty row with different height */}
+                        <div
+                            style={{
+                                fontSize: "0.875rem",
+                                lineHeight: "1.25rem",
+                                display: "flex",
+                                minHeight: "26px",
+                                maxHeight: "26px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                boxSizing: "border-box",
+                            }}
+                        ></div>
+                    </div>
+                </div>
+
+                {/* Jack style images & values */}
+                {/* Jack style images & values */}
+                {/* Jack style images & values */}
+                {/* Jack style images & values */}
+                <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(6, 1fr)",
+                        borderTop: "1px solid",
+                        borderColor: "inherit",
+                        marginTop: "0.5rem",
+                    }}
+                >
+                    {/* Column 1 - Jacket Length */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderLeft: "1px solid",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                            borderColor: "inherit",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>*1</p>
+                                <p>Jacket Length</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/jacket-length.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.jacketLength && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.jacketLength}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 2 - Sleeve Length */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>*2</p>
+                                <p>Sleeve Length</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/sleeve-length.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.sleeveLength && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.sleeveLength}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 3 - Half-Waist Circumference */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>*3</p>
+                                <p>Half-Waist Circumference</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/half-waist-circumference.png`}
+                                style={{ width: "70px", aspectRatio: "3/4.5" }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.halfWaistCircumference && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.halfWaistCircumference}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 4 - Total Shoulder Width */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>*4</p>
+                                <p>Total Shoulder Width</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/total-shoulder-width.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.totalShoulderWidth && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.totalShoulderWidth}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 5 - Shoulder's Difference */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>5</p>
+                                <p>Shoulder's Difference</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/shoulder-difference.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p
+                                        style={{
+                                            margin: 0, // remove default margins
+                                            padding: 0,
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.shouldersDifference?.rightCmLess && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.shouldersDifference?.rightCmLess}</span>
+                                        )}
+                                    </p>
+                                    <p style={{ fontSize: "10px", marginTop: "4px" }}>Less Right</p>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p
+                                        style={{
+                                            margin: 0,
+                                            padding: 0,
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.shouldersDifference?.leftCmLess && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.shouldersDifference?.leftCmLess}</span>
+                                        )}
+                                    </p>
+                                    <p style={{ fontSize: "10px", marginTop: "4px" }}>Less Left</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 6 - Remove Crease Under Collar */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>6</p>
+                                <p>Remove Crease Under Collar</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/crease-under-collar.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.removeCreaseUnderCollar && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.removeCreaseUnderCollar}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 7 - Half Armhole Width */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderLeft: "1px solid",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                            borderColor: "inherit",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>*7</p>
+                                <p>Half Armhole Width</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/half-armhole-width.png`}
+                                style={{ width: "70px", aspectRatio: "3/4.5" }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.halfArmholeWidth && (
+                                            <span style={{ color: "#000000" }}>
+                                                CM + / - <span style={{ marginLeft: "0.5rem" }}>{form?.jacketDetails?.halfArmholeWidth}</span>
+                                            </span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 8 - Remove Quills */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>8</p>
+                                <p>Remove Quills</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/remove-quills.png`}
+                                style={{ width: "70px", aspectRatio: "3/4.5" }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.removeQuills && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.removeQuills}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 9 - Curved Reversed */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>9</p>
+                                <p>Curved Reversed</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/curved-reversed.png`}
+                                style={{ width: "70px", aspectRatio: "3/4.5" }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.curvedReversed && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.curvedReversed}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 10 - Take in Collar */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>10</p>
+                                <p>Take in Collar</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/take-in-collar.png`}
+                                style={{ width: "70px", aspectRatio: "3/4.5" }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.takeInCollar && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.takeInCollar}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 11 - Loosen Jacket Front Width */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderRight: "1px solid",
+                            borderBottom: "1px solid",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>*11</p>
+                                <p style={{ whiteSpace: "nowrap" }}>Loosen Jacket Front Width</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/loosen-front-jacket-width.png`}
+                                style={{ width: "70px", aspectRatio: "3/4.5" }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.loosenFrontJacketWidth && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.loosenFrontJacketWidth}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Column 12 - Loosen Chest Width */}
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            padding: "0.5rem",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            borderBottom: "1px solid",
+                            borderRight: "1px solid",
+                            borderColor: "inherit",
+                        }}
+                    >
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>12</p>
+                                <p>Loosen Chest Width</p>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <img
+                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/loosen-chest-width.png`}
+                                style={{ width: "70px", aspectRatio: "3/4.5" }}
+                            />
+                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                    <p
+                                        style={{
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    >
+                                        {form?.jacketDetails?.loosenChestWidth && (
+                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.loosenChestWidth}</span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style={{ fontSize: "12px" }}>*Fields market with an asterisk must be completed</p>
+
+                <div style={{ breakAfter: "page" }}></div>
+
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* page 2 */}
+                {/* Top Header */}
+                {/* Top Header */}
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: "1rem",
+                    }}
+                >
+                    <img
+                        alt=""
+                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/logo.png`}
+                        style={{
+                            width: "4rem",
+                        }}
+                    />
+                </div>
+
+                {/* Header */}
+                <div style={{ display: "flex" }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: "0.875rem",
+                            marginRight: "3rem",
+                        }}
+                    >
+                        <span style={{ marginRight: "12px", marginTop: "10px" }}>NAME + LAST NAME:</span>
+                        <span
+                            style={{
+                                borderBottom: "1px solid black",
+                                width: "200px",
+                                textAlign: "center",
+                                color: "#000000",
+                            }}
+                        >
+                            {form?.orderDetails?.clientName}
+                        </span>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", fontSize: "14px" }}>
+                        <span style={{ marginRight: "12px", marginTop: "10px" }}>DATE:</span>
+                        <span
+                            style={{
+                                borderBottom: "1px solid black",
+                                width: "150px",
+                                textAlign: "center",
+                                color: "#000000",
+                            }}
+                        >
+                            {form?.orderDetails?.date}
+                        </span>
+                    </div>
+                </div>
+
+                <div style={{ display: "flex" }}>
+                    <div style={{ flex: "1" }}>
+                        {/* Headings Row */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderTop: "1px solid",
+                                borderBottom: "1px solid",
+                                marginTop: "0.5rem",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", flex: "1", alignItems: "center", justifyContent: "center", borderRight: "1px solid" }}>
+                                <span>STYLE</span>
+                            </div>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                }}
+                            >
+                                <span>FABRIC</span>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <span style={{ borderRight: "1px solid", paddingRight: "25px", paddingLeft: "25px" }}>STYLE</span>
+                                    <span style={{ paddingRight: "25px", paddingLeft: "25px" }}>COLOR</span>
+                                </div>
+                            </div>
+                            <div style={{ display: "flex", flex: "1", alignItems: "center", justifyContent: "center" }}>
+                                <span>TESTING SIZE</span>
+                            </div>
+                        </div>
+
+                        {/* Values Row */}
+                        {/* Pant product 1 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[0]?.model}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3.5px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getPantsFromCart()[0]?.fabricCode}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[0]?.fabricColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[0]?.testingSize}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Pant product 2 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[1]?.model}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3.5px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getPantsFromCart()[1]?.fabricCode}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[1]?.fabricColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[1]?.testingSize}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Pant product 3 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[2]?.model}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3.5px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getPantsFromCart()[2]?.fabricCode}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[2]?.fabricColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[2]?.testingSize}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Pant product 4 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[3]?.model}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height: "100%",
+                                    gap: "3.5px",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        borderRight: "1px solid #000",
+                                    }}
+                                >
+                                    {getPantsFromCart()[3]?.fabricCode}
+                                </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        height: "100%",
+                                        textAlign: "center",
+                                        width: "100%",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[3]?.fabricColor}
+                                </span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {getPantsFromCart()[3]?.testingSize}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Headings Row 2 monogram */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "32px",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>EMBROIDERY</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>EMBROIDERY POSITION</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>EMBROIDERY TEXT</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>FONT</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span>COLOR</span>
+                            </div>
+                        </div>
+
+                        {/* Monogram values 4 */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem", // text-xs (12px)
+                                lineHeight: "1rem", // text-xs line-height
+                                display: "flex", // flex
+                                borderBottom: "1px solid", // border-b
+                                borderColor: "inherit", // default border color
+                                height: "32px", // h-[32px]
+                            }}
+                        >
+                            {/* First Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000", // text-green-600
+                                        overflow: "hidden", // overflow-hidden
+                                        wordBreak: "break-word", // break-words
+                                    }}
+                                >
+                                    {form?.monogram?.required}
+                                </span>
+                            </div>
+
+                            {/* Second Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.side}
+                                </span>
+                            </div>
+
+                            {/* Third Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.text}
+                                </span>
+                            </div>
+
+                            {/* Fourth Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%", // flex-1
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.font}
+                                </span>
+                            </div>
+
+                            {/* Fifth Column (no right border) */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.color}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* General notes */}
+                        <div
+                            style={{
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "50px",
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                            }}
+                        >
+                            {/* First Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>
+                                    GENERAL
+                                    <br />
+                                    NOTES
+                                </span>
+                            </div>
+
+                            {/* Second Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "flex-start",
+                                    paddingLeft: "1rem",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                        fontSize: "0.75rem",
+                                        lineHeight: "1rem",
+                                    }}
+                                >
+                                    {form?.additionalNotes}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Attachements */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                height: "40px",
+                            }}
+                        >
+                            {/* First Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "150px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                    lineHeight: "1.25rem",
+                                }}
+                            >
+                                <span>ATTACHMENTS</span>
+                            </div>
+
+                            {/* Second Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flex: "1 1 0%",
+                                    alignItems: "center",
+                                    justifyContent: "flex-start",
+                                    paddingLeft: "1rem",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        fontSize: "0.75rem",
+                                        lineHeight: "1rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    ATTACH PICTURE OF: FRONT, BACK, SIDE - IN COMPLIANCE WITH THE PRIVACY POLICY AVOID PICTURING THE CUSTOMER'S FACE
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style={{
+                            width: "350px",
+                            borderLeft: "1px solid",
+                            borderTop: "1px solid",
+                            display: "flex",
+                            flexDirection: "column",
+                            marginTop: "8px",
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "33px",
+                                maxHeight: "33px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                boxSizing: "border-box",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <span>STORE</span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        marginLeft: "2rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.orderDetails?.store}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        ></div>
+
+                        {/* ORDER # */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>ORDER #</span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        marginLeft: "2rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.orderDetails?.orderNumber}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* PAGE */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>PAGE</span>
+                            </div>
+                        </div>
+
+                        {/* VITERBO'S ORDER NUMBER # */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>VITERBO'S ORDER NUMBER #</span>
+                            </div>
+                        </div>
+
+                        {/* PRICING LIST */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>PRICING LIST</span>
+                            </div>
+                        </div>
+
+                        {/* SALES PERSON */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>SALES PERSON</span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        marginLeft: "2rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.orderDetails?.associate}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* BOUTIQUE DELIVERY ADDRESS */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>BOUTIQUE DELIVERY ADDRESS</span>
+                            </div>
+                        </div>
+
+                        {/* Empty row with text-sm */}
+                        <div
+                            style={{
+                                fontSize: "0.875rem",
+                                lineHeight: "1.25rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        ></div>
+
+                        {/* Final empty row with different height */}
+                        <div
+                            style={{
+                                fontSize: "0.875rem",
+                                lineHeight: "1.25rem",
+                                display: "flex",
+                                minHeight: "26px",
+                                maxHeight: "26px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                                boxSizing: "border-box",
+                            }}
+                        ></div>
+                    </div>
+                </div>
+
+                {/* Jack style images & values */}
+                {/* Jack style images & values */}
+                {/* Jack style images & values */}
+                {/* Jack style images & values */}
+                <div style={{ display: "flex", marginTop: "0.5rem" }}>
+                    <div style={{ flex: "1" }}>
+                        <div
+                            style={{
+                                display: "grid",
+                                width: "100%",
+                                height: "fit-content",
+                                gridTemplateColumns: "repeat(4, 1fr)",
+                                borderTop: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            {/* Column 1 - Thigh & Knee Diameter */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    padding: "0.5rem",
+                                    paddingLeft: "1rem",
+                                    paddingRight: "1rem",
+                                    borderLeft: "1px solid",
+                                    borderRight: "1px solid",
+                                    borderBottom: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                        <p>*1</p>
+                                        <p>Thigh & Knee Diameter</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/thigh-&-knee-diameter.png`}
+                                        style={{ width: "70px", aspectRatio: "3/4.5" }}
+                                    />
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", gap: "16px", fontSize: "0.75rem" }}>
+                                            <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                                <p
+                                                    style={{
+                                                        margin: 0, // remove default margins
+                                                        padding: 0,
+                                                        borderBottom: "1px dashed #6b7280",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    {form?.pantDetails?.thighAndKneeDiameter?.halfThigh && (
+                                                        <span style={{ color: "#000000" }}>
+                                                            CM {form?.pantDetails?.thighAndKneeDiameter?.halfThigh}
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                                <p
+                                                    style={{
+                                                        margin: 0,
+                                                        padding: 0,
+                                                        borderBottom: "1px dashed #6b7280",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    {form?.pantDetails?.thighAndKneeDiameter?.halfKnee && (
+                                                        <span style={{ color: "#000000" }}>
+                                                            CM {form?.pantDetails?.thighAndKneeDiameter?.halfKnee}
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                                <p
+                                                    style={{
+                                                        margin: 0,
+                                                        padding: 0,
+                                                        borderBottom: "1px dashed #6b7280",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    {form?.pantDetails?.thighAndKneeDiameter?.halfCalf && (
+                                                        <span style={{ color: "#000000" }}>
+                                                            CM {form?.pantDetails?.thighAndKneeDiameter?.halfCalf}
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Column 2 - Sleeve Length */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    padding: "0.5rem",
+                                    paddingLeft: "1rem",
+                                    paddingRight: "1rem",
+                                    borderRight: "1px solid",
+                                    borderBottom: "1px solid",
+                                }}
+                            >
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                        <p>*2</p>
+                                        <p>Half Waist Diameter</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/half-waist-diameter.png`}
+                                        style={{ width: "70px", aspectRatio: "3/4.5" }}
+                                    />
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                            <p
+                                                style={{
+                                                    borderBottom: "1px dashed #6b7280",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {form?.pantDetails?.halfWaistDiameter && (
+                                                    <span style={{ color: "#000000" }}>
+                                                        CM + / - <span style={{ marginLeft: "0.5rem" }}>{form?.pantDetails?.halfWaistDiameter}</span>
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Column 3 - Half-Waist Circumference */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    padding: "0.5rem",
+                                    paddingLeft: "1rem",
+                                    paddingRight: "1rem",
+                                    borderRight: "1px solid",
+                                    borderBottom: "1px solid",
+                                }}
+                            >
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                        <p>*3</p>
+                                        <p>Half Pelvis Diameter</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/half-pelvis-diameter.png`}
+                                        style={{ width: "70px", aspectRatio: "3/4.5" }}
+                                    />
+                                    <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", marginBottom: "12px", width: "60px" }}>
+                                            <p
+                                                style={{
+                                                    margin: 0, // remove default margins
+                                                    padding: 0,
+                                                    borderBottom: "1px dashed #6b7280",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {form?.pantDetails?.halfPelvisDiameter?.measurement && (
+                                                    <span style={{ color: "#000000" }}>CM {form?.pantDetails?.halfPelvisDiameter?.measurement}</span>
+                                                )}
+                                            </p>
+                                        </div>
+                                        <div style={{ display: "flex", flexDirection: "column", width: "70px", borderBottom: "1px dashed #6b7280" }}>
+                                            <p
+                                                style={{
+                                                    margin: 0,
+                                                    padding: 0,
+                                                    textAlign: "center",
+                                                    marginBottom: "2px",
+                                                }}
+                                            >
+                                                Wide Crotch
+                                            </p>
+
+                                            {form?.pantDetails?.halfPelvisDiameter?.YesNo && (
+                                                <p style={{ color: "#000000", fontSize: "10px", textAlign: "center", margin: 0, padding: 0 }}>
+                                                    {form?.pantDetails?.halfPelvisDiameter?.YesNo}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Column 4 - Total Shoulder Width */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    padding: "0.5rem",
+                                    paddingLeft: "1rem",
+                                    paddingRight: "1rem",
+                                    borderRight: "1px solid",
+                                    borderBottom: "1px solid",
+                                }}
+                            >
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                        <p>*4</p>
+                                        <p>Loosen Bottom</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/loosen-bottom.png`}
+                                        style={{ width: "70px", aspectRatio: "3/4.5" }}
+                                    />
+                                    <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                            <p
+                                                style={{
+                                                    margin: 0, // remove default margins
+                                                    padding: 0,
+                                                    borderBottom: "1px dashed #6b7280",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {form?.pantDetails?.loosenBottom?.length && (
+                                                    <span style={{ color: "#000000" }}>CM {form?.pantDetails?.loosenBottom?.length}</span>
+                                                )}
+                                            </p>
+                                            <p style={{ fontSize: "10px", marginTop: "4px" }}>Length</p>
+                                        </div>
+                                        <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                            <p
+                                                style={{
+                                                    margin: 0,
+                                                    padding: 0,
+                                                    borderBottom: "1px dashed #6b7280",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {form?.pantDetails?.loosenBottom?.bottom && (
+                                                    <span style={{ color: "#000000" }}>CM {form?.pantDetails?.loosenBottom?.bottom}</span>
+                                                )}
+                                            </p>
+                                            <p style={{ fontSize: "10px", marginTop: "4px" }}>Bottom</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Column 5 - Shoulder's Difference */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    padding: "0.5rem",
+                                    paddingLeft: "1rem",
+                                    paddingRight: "1rem",
+                                    borderLeft: "1px solid",
+                                    borderRight: "1px solid",
+                                    borderBottom: "1px solid",
+                                }}
+                            >
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                        <p>5</p>
+                                        <p>Raise / Lower Waist</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/raise-lower-waist.png`}
+                                        style={{ width: "70px", aspectRatio: "3/4.5" }}
+                                    />
+                                    <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                            <p
+                                                style={{
+                                                    margin: 0, // remove default margins
+                                                    padding: 0,
+                                                    borderBottom: "1px dashed #6b7280",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {form?.pantDetails?.raiseLowerWaist?.moreHigh && (
+                                                    <span style={{ color: "#000000" }}>
+                                                        CM + / -{" "}
+                                                        <span style={{ marginLeft: "0.5rem" }}>{form?.pantDetails?.raiseLowerWaist?.moreHigh}</span>
+                                                    </span>
+                                                )}
+                                            </p>
+                                            <p style={{ fontSize: "10px", marginTop: "4px" }}>More High</p>
+                                        </div>
+                                        <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                            <p
+                                                style={{
+                                                    margin: 0,
+                                                    padding: 0,
+                                                    borderBottom: "1px dashed #6b7280",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {form?.pantDetails?.raiseLowerWaist?.lessLow && (
+                                                    <span style={{ color: "#000000" }}>
+                                                        CM + / -{" "}
+                                                        <span style={{ marginLeft: "0.5rem" }}>{form?.pantDetails?.raiseLowerWaist?.lessLow}</span>
+                                                    </span>
+                                                )}
+                                            </p>
+                                            <p style={{ fontSize: "10px", marginTop: "4px" }}>Less Low</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Column 6 - Remove Crease Under Collar */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    padding: "0.5rem",
+                                    paddingLeft: "1rem",
+                                    paddingRight: "1rem",
+                                    borderBottom: "1px solid",
+                                    borderRight: "1px solid",
+                                }}
+                            >
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                        <p>6</p>
+                                        <p>Crotch Length</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/crotch-length.png`}
+                                        style={{ width: "70px", aspectRatio: "3/4.5" }}
+                                    />
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                            <p
+                                                style={{
+                                                    borderBottom: "1px dashed #6b7280",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {form?.pantDetails?.crotchLength && (
+                                                    <span style={{ color: "#000000" }}>CM {form?.pantDetails?.crotchLength}</span>
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Column 7 - Half Armhole Width */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    padding: "0.5rem",
+                                    paddingLeft: "1rem",
+                                    paddingRight: "1rem",
+                                    borderBottom: "1px solid",
+                                    borderRight: "1px solid",
+                                }}
+                            >
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                        <p>7</p>
+                                        <p>Lower Rise at Front</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                    <img
+                                        src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/lower-rise-at-front.png`}
+                                        style={{ width: "70px", aspectRatio: "3/4.5" }}
+                                    />
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                                            <p
+                                                style={{
+                                                    borderBottom: "1px dashed #6b7280",
+                                                    textAlign: "center",
+                                                }}
+                                            >
+                                                {form?.pantDetails?.lowerRiseAtFront && (
+                                                    <span style={{ color: "#000000" }}>CM {form?.pantDetails?.lowerRiseAtFront}</span>
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p style={{ fontSize: "12px" }}>*Fields market with an asterisk must be completed</p>
+                    </div>
+
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width: "280px",
+                            border: "1px solid",
+                            marginLeft: "200px",
+                            fontSize: "12px",
+                            height: "fit-content",
+                            boxSizing: "border-box",
+                        }}
+                    >
+                        <div style={{ borderBottom: "1px solid", boxSizing: "border-box" }}>
+                            <p style={{ textAlign: "center", padding: "12px", margin: 0, boxSizing: "border-box" }}>SIZE GUIDE</p>
+                        </div>
+
+                        <div style={{ borderBottom: "1px solid", display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p style={{ textAlign: "center", padding: "6px", paddingLeft: "30px", margin: 0, boxSizing: "border-box" }}>ITA SIZE</p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "30px", margin: 0, boxSizing: "border-box" }}>USA SIZE</p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                42
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                28
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                44
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                30
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                46
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                31
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                48
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                32
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                50
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                33
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                52
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                34
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                54
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                36
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                56
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                38
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                58
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                40
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                60
+                            </p>
+                            <p style={{ textAlign: "center", padding: "6px", paddingRight: "10px", flex: "1", margin: 0, boxSizing: "border-box" }}>
+                                42
+                            </p>
+                        </div>
+
+                        <div style={{ display: "flex", justifyContent: "space-between", boxSizing: "border-box" }}>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingBottom: "15px",
+                                    paddingLeft: "10px",
+                                    borderRight: "1px solid",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                62
+                            </p>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                    padding: "6px",
+                                    paddingBottom: "15px",
+                                    paddingRight: "10px",
+                                    flex: "1",
+                                    margin: 0,
+                                    boxSizing: "border-box",
+                                }}
+                            >
+                                44
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            {/* Header */}
-            <div className="flex">
-                <div className="flex items-center text-sm mr-12">
-                    <span className="mr-3 mt-[10px]">NAME + LAST NAME:</span>
-                    <span className="border-b border-black w-[200px] text-center text-green-600 font-semibold">1</span>
-                </div>
-
-                <div className="flex items-center text-sm">
-                    <span className="mr-3 mt-[10px]">DATE:</span>
-                    <span className="border-b border-black w-[150px] text-center text-green-600 font-semibold">2</span>
-                </div>
-            </div>
-
-            <div className="flex">
-                <div className="flex-1">
-                    {/* Headings Row */}
-                    <div className="text-xs flex border-y mt-2 divide-x">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span>STYLE</span>
-                        </div>
-                        <div className="flex flex-1 flex-col items-center justify-center">
-                            <span>FABRIC</span>
-                            <div className="flex items-center justify-center divide-x">
-                                <span className="px-3">STYLE</span>
-                                <span className="px-3">COLOR</span>
-                            </div>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span>
-                                TESTING <br /> SIZE
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span>
-                                STYLE <br /> LINING
-                            </span>
-                        </div>
-                        <div className="flex flex-1 flex-col items-center justify-center">
-                            <span>BUTTON</span>
-                            <div className="flex items-center justify-center divide-x">
-                                <span className="px-3">STYLE</span>
-                                <span className="px-3">COLOR</span>
-                            </div>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span>
-                                HANDMADE <br /> BUTTONHOLES
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Values Row */}
-                    {/* Jacket product 1 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">JS-1</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[3px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                FC 1
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                C 1
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">TS 1</span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">001</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[2px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BS-1
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BC-1
-                            </span>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">YES</span>
-                        </div>
-                    </div>
-
-                    {/* Jacket product 2 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">JS-2</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[3px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                FC 2
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                C 2
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">TS 2</span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">002</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[2px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BS-2
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BC-2
-                            </span>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">NO</span>
-                        </div>
-                    </div>
-
-                    {/* Jacket product 3 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">JS-3</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[3px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                FC 3
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                C 3
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">TS 3</span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">003</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[2px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BS-3
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BC-3
-                            </span>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">YES</span>
-                        </div>
-                    </div>
-
-                    {/* Jacket product 4 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">JS-4</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[3px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                FC 4
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                C 4
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">TS 4</span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">004</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[2px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BS-4
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BC-4
-                            </span>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">YES</span>
-                        </div>
-                    </div>
-
-                    {/* Headings Row 2 monogram */}
-                    <div className="text-xs flex border-y divide-x border-t-0 h-[32px]">
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span>EMBROIDERY</span>
-                        </div>
-
-                        <div className="flex w-[200px] items-center justify-center">
-                            <span>EMBROIDERY POSITION</span>
-                        </div>
-                        <div className="flex w-[200px] items-center justify-center">
-                            <span>EMBROIDERY TEXT</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-center">
-                            <span>FONT</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-center">
-                            <span>COLOR</span>
-                        </div>
-                    </div>
-
-                    {/* Monogram values 4 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">YES</span>
-                        </div>
-
-                        <div className="flex w-[200px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">LEFT SIDE</span>
-                        </div>
-
-                        <div className="flex w-[200px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">6</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">9</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">8</span>
-                        </div>
-                    </div>
-
-                    {/* General notes */}
-                    <div className="flex border-b divide-x h-[50px] text-xs">
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span>
-                                GENRAL <br /> NOTES
-                            </span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-start pl-4">
-                            <span className="text-green-600 break-words overflow-hidden text-xs">GN</span>
-                        </div>
-                    </div>
-
-                    {/* Attachements */}
-                    <div className="text-xs flex border-b divide-x h-[40px]">
-                        <div className="flex w-[150px] items-center justify-center text-sm">
-                            <span>Attachements</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-start pl-4">
-                            <span className="text-green-600 text-xs break-words overflow-hidden">
-                                ATTACH PICTURE OF: FRONT, BACK, SIDE - IN COMPLIANCE WITH THE PRIVACY POLICY AVOID PICTURING THE CUSTOMER’S FACE
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="w-[350px] border-l flex flex-col mt-2 border-t divide-y">
-                    <div className="text-xs flex min-h-[33px] max-h-[33px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>STORE</span>
-
-                            <span className="text-green-600 ml-8 break-words overflow-hidden">5</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6"></div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>ORDER #</span>
-
-                            <span className="text-green-600 ml-8 break-words overflow-hidden">3</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>PAGE</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>VITERBO’S ORDER NUMBER #</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>PRICING LIST</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>SALES PERSON</span>
-
-                            <span className="text-green-600 ml-8 break-words overflow-hidden">4</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>BOUTIQUE DELIVERY ADDRESS</span>
-                        </div>
-                    </div>
-
-                    <div className="text-sm flex min-h-[32px] max-h-[32px] pl-6"></div>
-                    <div className="text-sm flex min-h-[26px] max-h-[26px] pl-6 border-b"></div>
-                </div>
-            </div>
-
-            {/* Jack style images & values */}
-            <div className="grid grid-cols-6 divide-x divide-y mt-2 border-t">
-                <div className="flex flex-col p-2 px-4 border-l">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-2 gap-x-2 text-xs">
-                            <p>*1</p>
-                            <p>Jacket Length</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={jacketLengthImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 10</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*2</p>
-                            <p>Sleeve Length</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={sleeveLengthImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 11</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*3</p>
-                            <p>Half-Waist Circumference</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={halfWaistCircumferenceImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 12</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*4</p>
-                            <p>Total Shoulder Width</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={totalShoulderWidthImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 13</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>5</p>
-                            <p>Shoulder's Difference</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={shouldersDifferenceImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">Right 15</p>
-                                <p className="text-[10px] font-rouben-semi-bold">Less</p>
-                            </div>
-
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">Left 14</p>
-                                <p className="text-[10px] font-rouben-semi-bold">Less</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>6</p>
-                            <p>Remove Crease Under Collar</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={removeCreaseUnderCollarImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 16</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4 border-l">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*7</p>
-                            <p>Half Armhole Width</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={halfArmholeWidthImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">
-                                    + / - <span className="ml-2">17</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>8</p>
-                            <p>Remove Quills</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={removeQuillsImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 18</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>9</p>
-                            <p>Curved Reversed</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={curvedReversedImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 19</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>10</p>
-                            <p>Take in Collar</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={takeInCollarImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 20</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*11</p>
-                            <p className="whitespace-nowrap">Loosen Jackent Front Width</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={loosenFrontJacketWidthImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 21</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4 border-b border-r">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>12</p>
-                            <p>Loosen Chest Width</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={loosenChestWidthImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 22</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <p className="text-xs">*Fields market with an asterisk must be completed</p>
-
-            <div className="break-after-page"></div>
-
-            {/* page 2 */}
-            {/* Top Header */}
-            <div className="flex items-center justify-center mb-4">
-                <Image alt="" src={logo} className="w-16" />
-            </div>
-
-            {/* Header */}
-            <div className="flex">
-                <div className="flex items-center text-sm mr-12">
-                    <span className="mr-3 mt-[10px]">NAME + LAST NAME:</span>
-                    <span className="border-b border-black w-[200px] text-center text-green-600 font-semibold">1</span>
-                </div>
-
-                <div className="flex items-center text-sm">
-                    <span className="mr-3 mt-[10px]">DATE:</span>
-                    <span className="border-b border-black w-[150px] text-center text-green-600 font-semibold">2</span>
-                </div>
-            </div>
-
-            <div className="flex">
-                <div className="flex-1">
-                    {/* Headings Row */}
-                    <div className="text-xs flex border-y mt-2 divide-x">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span>STYLE</span>
-                        </div>
-                        <div className="flex flex-1 flex-col items-center justify-center">
-                            <span>FABRIC</span>
-                            <div className="flex items-center justify-center divide-x">
-                                <span className="px-3">STYLE</span>
-                                <span className="px-3">COLOR</span>
-                            </div>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span>
-                                TESTING <br /> SIZE
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span>
-                                STYLE <br /> LINING
-                            </span>
-                        </div>
-                        <div className="flex flex-1 flex-col items-center justify-center">
-                            <span>BUTTON</span>
-                            <div className="flex items-center justify-center divide-x">
-                                <span className="px-3">STYLE</span>
-                                <span className="px-3">COLOR</span>
-                            </div>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span>
-                                HANDMADE <br /> BUTTONHOLES
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Values Row */}
-                    {/* Jacket product 1 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">JS-1</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[3px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                FC 1
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                C 1
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">TS 1</span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">001</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[2px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BS-1
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BC-1
-                            </span>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">YES</span>
-                        </div>
-                    </div>
-
-                    {/* Jacket product 2 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">JS-2</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[3px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                FC 2
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                C 2
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">TS 2</span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">002</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[2px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BS-2
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BC-2
-                            </span>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">NO</span>
-                        </div>
-                    </div>
-
-                    {/* Jacket product 3 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">JS-3</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[3px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                FC 3
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                C 3
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">TS 3</span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">003</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[2px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BS-3
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BC-3
-                            </span>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">YES</span>
-                        </div>
-                    </div>
-
-                    {/* Jacket product 4 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">JS-4</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[3px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                FC 4
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                C 4
-                            </span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">TS 4</span>
-                        </div>
-                        <div className="flex w-[100px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">004</span>
-                        </div>
-                        <div className="flex flex-1 items-center justify-center divide-x divide-black h-full gap-[2px]">
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BS-4
-                            </span>
-                            <span className="text-green-600 flex items-center justify-center h-full text-center w-full break-words overflow-hidden">
-                                BC-4
-                            </span>
-                        </div>
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">YES</span>
-                        </div>
-                    </div>
-
-                    {/* Headings Row 2 monogram */}
-                    <div className="text-xs flex border-y divide-x border-t-0 h-[32px]">
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span>EMBROIDERY</span>
-                        </div>
-
-                        <div className="flex w-[200px] items-center justify-center">
-                            <span>EMBROIDERY POSITION</span>
-                        </div>
-                        <div className="flex w-[200px] items-center justify-center">
-                            <span>EMBROIDERY TEXT</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-center">
-                            <span>FONT</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-center">
-                            <span>COLOR</span>
-                        </div>
-                    </div>
-
-                    {/* Monogram values 4 */}
-                    <div className="text-xs flex border-b divide-x h-[32px]">
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">YES</span>
-                        </div>
-
-                        <div className="flex w-[200px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">LEFT SIDE</span>
-                        </div>
-
-                        <div className="flex w-[200px] items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">6</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">9</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-center">
-                            <span className="text-green-600 break-words overflow-hidden">8</span>
-                        </div>
-                    </div>
-
-                    {/* General notes */}
-                    <div className="flex border-b divide-x h-[50px] text-xs">
-                        <div className="flex w-[150px] items-center justify-center">
-                            <span>
-                                GENRAL <br /> NOTES
-                            </span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-start pl-4">
-                            <span className="text-green-600 break-words overflow-hidden text-xs">GN</span>
-                        </div>
-                    </div>
-
-                    {/* Attachements */}
-                    <div className="text-xs flex border-b divide-x h-[40px]">
-                        <div className="flex w-[150px] items-center justify-center text-sm">
-                            <span>Attachements</span>
-                        </div>
-
-                        <div className="flex flex-1 items-center justify-start pl-4">
-                            <span className="text-green-600 text-xs break-words overflow-hidden">
-                                ATTACH PICTURE OF: FRONT, BACK, SIDE - IN COMPLIANCE WITH THE PRIVACY POLICY AVOID PICTURING THE CUSTOMER’S FACE
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="w-[350px] border-l flex flex-col mt-2 border-t divide-y">
-                    <div className="text-xs flex min-h-[33px] max-h-[33px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>STORE</span>
-
-                            <span className="text-green-600 ml-8 break-words overflow-hidden">5</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6"></div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>ORDER #</span>
-
-                            <span className="text-green-600 ml-8 break-words overflow-hidden">3</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>PAGE</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>VITERBO’S ORDER NUMBER #</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>PRICING LIST</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>SALES PERSON</span>
-
-                            <span className="text-green-600 ml-8 break-words overflow-hidden">4</span>
-                        </div>
-                    </div>
-
-                    <div className="text-xs flex min-h-[32px] max-h-[32px] pl-6">
-                        <div className="flex items-center justify-center">
-                            <span>BOUTIQUE DELIVERY ADDRESS</span>
-                        </div>
-                    </div>
-
-                    <div className="text-sm flex min-h-[32px] max-h-[32px] pl-6"></div>
-                    <div className="text-sm flex min-h-[26px] max-h-[26px] pl-6 border-b"></div>
-                </div>
-            </div>
-
-            {/* Jack style images & values */}
-            <div className="grid grid-cols-6 divide-x divide-y mt-2 border-t">
-                <div className="flex flex-col p-2 px-4 border-l">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-2 gap-x-2 text-xs">
-                            <p>*1</p>
-                            <p>Jacket Length</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={jacketLengthImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 10</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*2</p>
-                            <p>Sleeve Length</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={sleeveLengthImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 11</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*3</p>
-                            <p>Half-Waist Circumference</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={halfWaistCircumferenceImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 12</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*4</p>
-                            <p>Total Shoulder Width</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={totalShoulderWidthImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 13</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>5</p>
-                            <p>Shoulder's Difference</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={shouldersDifferenceImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">Right 15</p>
-                                <p className="text-[10px] font-rouben-semi-bold">Less</p>
-                            </div>
-
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">Left 14</p>
-                                <p className="text-[10px] font-rouben-semi-bold">Less</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>6</p>
-                            <p>Remove Crease Under Collar</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={removeCreaseUnderCollarImage} className="w-[70px]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 16</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4 border-l">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*7</p>
-                            <p>Half Armhole Width</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={halfArmholeWidthImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">
-                                    + / - <span className="ml-2">17</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>8</p>
-                            <p>Remove Quills</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={removeQuillsImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 18</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>9</p>
-                            <p>Curved Reversed</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={curvedReversedImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 19</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>10</p>
-                            <p>Take in Collar</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={takeInCollarImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 20</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>*11</p>
-                            <p className="whitespace-nowrap">Loosen Jackent Front Width</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={loosenFrontJacketWidthImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 21</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex flex-col p-2 px-4 border-b border-r">
-                    <div className="flex flex-col">
-                        <div className="flex items-center mb-4 gap-x-2 text-xs">
-                            <p>12</p>
-                            <p>Loosen Chest Width</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <Image alt="" src={loosenChestWidthImage} className="w-[70px] aspect-[3/4.5]" />
-
-                        <div className="flex flex-col gap-y-8 text-xs">
-                            <div className="flex flex-col w-[60px]">
-                                <p className="border-b border-gray-500 border-dashed text-center">CM 22</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <p className="text-xs">*Fields market with an asterisk must be completed</p>
-        </div>
+        </>
     );
 }

@@ -1,84 +1,102 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "nextjs-toploader/app";
-import Cookies from "js-cookie";
 import axios from "axios";
 
-import logo from "../../../public/images/logo.png";
+import logo from "../../../../public/images/logo.png";
 
-import Spinner from "@/components/Spinner";
 import Popup from "@/components/Popup";
 import useSession from "@/hooks/user/get-session";
-import configSettings from "../../../config";
+import configSettings from "../../../../config";
 import Image from "next/image";
 import SmallSpinner from "@/components/SmallSpinner";
 
-const Signin = () => {
+const ResetPassword = () => {
     const session = useSession();
 
-    const [form, setForm] = useState({
-        email: "",
-        password: "",
-    });
+    const [credentials, setCredentials] = useState();
 
-    const [isSpinner, setIsSpinner] = useState(false);
     const [isPopup, setIsPopup] = useState(false);
     const [popupDetail, setPopupDetail] = useState();
+    const [isSpinner, setIsSpinner] = useState(false);
 
+    const params = useParams();
     const router = useRouter();
 
-    const handleInput = (e) => {
-        let name = e.target.name;
-        let value = e.target.value;
+    let name, value;
 
-        setForm({ ...form, [name]: value });
+    const handleInput = (e) => {
+        name = e.target.name;
+        value = e.target.value;
+        setCredentials({ ...credentials, [name]: value });
     };
 
-    const signinUser = async () => {
-        try {
-            if (!form?.email || !form?.password) {
-                setPopupDetail({
-                    type: "Warning",
-                    text: "Please provide email address and password first",
-                });
-
-                setIsPopup(true);
-
-                setTimeout(function () {
-                    setIsPopup(false);
-                }, 4000);
-
-                return;
-            }
-
-            setIsSpinner(true);
-
-            const result = await axios.post(configSettings.serverUrl + "/signin", {
-                email: form?.email,
-                password: form?.password,
-            });
-
-            const response = result.data;
-
-            Cookies.set("access-token", response.data);
-
-            setIsSpinner(false);
-
+    const resetPassword = async () => {
+        if (!credentials?.password || !credentials?.conPassword) {
             setPopupDetail({
-                type: "Success",
-                text: "Your account has been successfully logged in",
+                type: "Warning",
+                text: "Please fill all the fields first to reset your password",
             });
 
             setIsPopup(true);
 
             setTimeout(function () {
                 setIsPopup(false);
-                router.push("/");
-            }, 2000);
+            }, 4000);
+
+            return;
+        } else if (credentials?.password.length < 8) {
+            setPopupDetail({
+                type: "Warning",
+                text: "Password must me 8 characters long",
+            });
+
+            setIsPopup(true);
+
+            setTimeout(function () {
+                setIsPopup(false);
+            }, 4000);
+
+            return;
+        } else if (credentials?.password !== credentials?.conPassword) {
+            setPopupDetail({
+                type: "Warning",
+                text: "Password does not match",
+            });
+
+            setIsPopup(true);
+
+            setTimeout(function () {
+                setIsPopup(false);
+            }, 4000);
+
+            return;
+        }
+
+        try {
+            setIsSpinner(true);
+            await axios.post(configSettings.serverUrl + "/resetPassword", {
+                token: params.userId,
+                password: credentials?.password,
+            });
+
+            setCredentials();
+
+            setPopupDetail({
+                type: "Success",
+                text: "Your password has been successfully recovered. You can now login with your new credentials",
+            });
+
+            setIsPopup(true);
+
+            setTimeout(function () {
+                setIsPopup(false);
+                router.push("/admin");
+            }, 4000);
         } catch (error) {
             setIsSpinner(false);
-
             if (error.response.status === 400) {
                 setPopupDetail({
                     type: "Warning",
@@ -105,46 +123,40 @@ const Signin = () => {
             {/* section 4 */}
             <div className="bg-[#ffffff] flex items-center justify-center h-screen">
                 <div className="flex flex-col max-w-6xl w-full md:mx-auto py-20">
-                    <div className="flex items-center justify-center md:mb-12">
+                    <div className="flex items-center justify-center md:mb-6">
                         <Image alt="Logo" src={logo} className="w-[120px] md:w-[150px]" />
+                    </div>
+
+                    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                        <p className="font-rouben-regular text-center mb-12 text-gray-600">
+                            Please enter you new password to reset your current password
+                        </p>
                     </div>
 
                     <div className="flex flex-col 4lg:flex-row 4lg:space-x-12 px-6 4lg:px-0">
                         <div className="flex-1 flex flex-col space-y-6 mt-12 4lg:mt-0 md:min-w-[36rem] md:max-w-xl md:mx-auto font-rouben-regular">
                             <div className="flex-1">
-                                <p className="text-[#313131] mb-2">Email Address</p>
-                                <input
-                                    type="email"
-                                    placeholder="Email Address"
-                                    name="email"
-                                    className="w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none"
-                                    onChange={handleInput}
-                                    value={form?.email}
-                                />
-                            </div>
-                            <div className="flex-1">
-                                <p className="text-[#313131] mb-2">Password</p>
-
+                                <p className="text-[#313131] mb-2">New Password</p>
                                 <input
                                     type="password"
-                                    placeholder="Password"
-                                    name="password"
+                                    placeholder="Enter New Password"
                                     autoComplete="off"
+                                    name="password"
                                     className="w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none"
                                     onChange={handleInput}
-                                    value={form?.password}
                                 />
                             </div>
 
-                            <div className="flex items-center justify-end !mt-[-10px]">
-                                <p
-                                    className="text-sm text-blue-500 cursor-pointer font-rouben-semi-bold"
-                                    onClick={() => {
-                                        router.push("/forgot-password");
-                                    }}
-                                >
-                                    Forgotten your password ?
-                                </p>
+                            <div className="flex-1">
+                                <p className="text-[#313131] mb-2">Confirm Password</p>
+                                <input
+                                    type="password"
+                                    placeholder="Confirm New Password"
+                                    autoComplete="off"
+                                    name="conPassword"
+                                    className="w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none"
+                                    onChange={handleInput}
+                                />
                             </div>
 
                             <button
@@ -154,7 +166,7 @@ const Signin = () => {
                                 disabled={isSpinner}
                                 aria-busy={isSpinner}
                                 onClick={() => {
-                                    signinUser();
+                                    resetPassword();
                                 }}
                             >
                                 {isSpinner ? (
@@ -162,9 +174,15 @@ const Signin = () => {
                                         <SmallSpinner />
                                     </span>
                                 ) : (
-                                    <span className="font-rouben-semi-bold uppercase">Sign in</span>
+                                    <span className="font-rouben-semi-bold uppercase">Reset Password</span>
                                 )}
                             </button>
+
+                            <div className="flex items-center justify-center">
+                                <Link href={"/admin"} className="text-sm text-primary cursor-pointer font-rouben-semi-bold">
+                                    Back to Signin
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -175,4 +193,4 @@ const Signin = () => {
     );
 };
 
-export default Signin;
+export default ResetPassword;

@@ -12,18 +12,19 @@ import logo from "../../public/images/logo2.png";
 import Popup from "@/components/Popup";
 import useSession from "@/hooks/user/get-session";
 import { Eye, Frown } from "lucide-react";
+import axios from "axios";
+import configSettings from "../../config";
+import Spinner from "./Spinner";
+import SmallSpinner from "./SmallSpinner";
 
 const Navbar = ({ cartItems, setCartItems }) => {
     const session = useSession();
 
+    const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+
     const [cartSidebar, setCartSidebar] = useState(false);
 
     const router = useRouter();
-    const pathName = usePathname();
-
-    const [isMobile, setIsMobile] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [navbarDropdown, setNavbarDropdown] = useState(false);
 
     const [isPopup, setIsPopup] = useState(false);
     const [popupDetail, setPopupDetail] = useState();
@@ -46,14 +47,6 @@ const Navbar = ({ cartItems, setCartItems }) => {
         }
     };
 
-    const toggleHamBurger = () => {
-        setSidebarOpen(!sidebarOpen);
-
-        if (navbarDropdown) {
-            setNavbarDropdown(!navbarDropdown);
-        }
-    };
-
     const logoutUser = () => {
         Cookies.remove("access-token");
 
@@ -66,23 +59,62 @@ const Navbar = ({ cartItems, setCartItems }) => {
 
         setTimeout(function () {
             setIsPopup(false);
-            router.push("/signin");
-        }, 2000);
-
-        session?.refetch();
+            router.push("/admin");
+            session?.refetch();
+        }, 3000);
     };
 
-    useEffect(() => {
-        setIsMobile(window.innerWidth < 1150);
+    const handlePreview = async () => {
+        try {
+            setIsPreviewLoading(true);
 
-        function handleResize() {
-            setIsMobile(window.innerWidth < 1150);
+            const response = await axios.post(
+                configSettings.publicServerUrl + `/previewOrder`,
+                {
+                    html: document.getElementById("pdf-block").outerHTML,
+                },
+                {
+                    headers: {
+                        "access-token": Cookies.get("access-token"),
+                        "Content-Type": "application/json",
+                    },
+                    responseType: "blob", // Important: Tell Axios to expect binary data
+                }
+            );
+
+            // Create a blob from the response data
+            const blob = new Blob([response.data], { type: "application/pdf" });
+
+            // Create a URL for the blob
+            const pdfUrl = URL.createObjectURL(blob);
+
+            // Open the PDF in a new tab
+            const newWindow = window.open(pdfUrl, "_blank");
+
+            // Focus the new window (helps with popup blockers)
+            if (newWindow) {
+                newWindow.focus();
+            } else {
+                // If popup was blocked, show download option
+                const link = document.createElement("a");
+                link.href = pdfUrl;
+                link.target = "_blank";
+                link.download = "preview.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            // Revoke the object URL after 1 hour
+            setTimeout(() => URL.revokeObjectURL(pdfUrl), 60 * 60 * 1000); // 1 hour
+
+            setIsPreviewLoading(false);
+        } catch (error) {
+            setIsPreviewLoading(false);
+            console.error("Error generating PDF:", error);
+            // Handle error (show toast, etc.)
         }
-
-        window.addEventListener("resize", handleResize);
-
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    };
 
     return (
         <div>
@@ -90,14 +122,14 @@ const Navbar = ({ cartItems, setCartItems }) => {
                 id="navbar"
                 className={`relative bg-[#EFF2F6] flex items-center justify-between w-full px-5 sm:px-12 py-2 z-10 font-rouben-semi-bold`}
             >
-                <div className="cursor-pointer" onClick={() => router.push("/")}>
+                <div onClick={() => router.push("/")}>
                     <Image alt="logo" src={logo} className="w-[60px] invert contrast-75" />
                 </div>
 
-                <div className="items-center hidden 3lg:flex">
-                    <div className="w-[1px] h-[50px] bg-[#babec1] mr-9"></div>
+                <div className="items-center flex">
+                    <div className="hidden md:block w-[1px] h-[50px] bg-[#babec1] mr-4 md:mr-9"></div>
                     <div
-                        className="flex items-center justify-center mr-9 text-[#616568] cursor-pointer"
+                        className="flex items-center justify-center mr-4 md:mr-9 text-[#616568] cursor-pointer text-sm md:text-base"
                         onClick={() => {
                             setCartSidebar(!cartSidebar);
                         }}
@@ -107,157 +139,16 @@ const Navbar = ({ cartItems, setCartItems }) => {
 
                     <div className="flex items-center justify-center mr-2">
                         <button
-                            className="bg-gradient-to-tr from-primary to-[#095eb9] text-white tracking-wide font-mulish-regular p-3 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
-                            onClick={() => router.push("/signin")}
+                            className="bg-gradient-to-tr from-primary to-[#095eb9] text-white tracking-wide font-mulish-regular p-2.5 md:p-3 px-4 md:px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
+                            onClick={() => {
+                                logoutUser();
+                            }}
                         >
                             <span className="font-rouben-regular uppercase">Sign Out</span>
                         </button>
                     </div>
                 </div>
-
-                <div
-                    className="flex items-center justify-center bg-transparent rounded-full w-10 h-10 cursor-pointer 3lg:hidden"
-                    onClick={toggleHamBurger}
-                >
-                    {sidebarOpen ? (
-                        <div className="flex flex-col">
-                            <span className="bg-black w-4 h-[1px] rotate-45"></span>
-                            <span className="bg-black w-4 h-[1px] mt-[-1px] -rotate-45"></span>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col">
-                            <span className="bg-black w-4 h-[1px] mb-1"></span>
-                            <span className="bg-black w-4 h-[1px] mb-1"></span>
-                            <span className="bg-black w-3 h-[1px]"></span>
-                        </div>
-                    )}
-                </div>
             </div>
-
-            {/* sidebar */}
-
-            {isMobile && (
-                <>
-                    <div
-                        className={`fixed top-0 left-[-250px] bottom-0 flex flex-col z-20 text-black bg-white shadow-2xl w-60 p-4 pt-6 transition-all duration-500 font-rouben-regular uppercase text-sm ${
-                            sidebarOpen && "!left-0"
-                        }`}
-                    >
-                        <Link
-                            className={`nav-link mb-4 text-sm tracking-wider text-[#80868A] hover:text-primary transition-all !uppercase w-fit ${
-                                pathName === "/" ? "active !text-primary" : ""
-                            }`}
-                            href="/"
-                            scroll={false}
-                        >
-                            HOME
-                        </Link>
-
-                        <Link
-                            className={`nav-link mb-4 text-sm tracking-wider text-[#80868A] hover:text-primary transition-all !uppercase w-fit ${
-                                pathName === "/free-books" ? "active !text-primary" : ""
-                            }`}
-                            href="/free-books"
-                        >
-                            FREE BOOKS
-                        </Link>
-
-                        <Link
-                            className={`nav-link mb-4 text-sm tracking-wider text-[#80868A] hover:text-primary transition-all !uppercase w-fit ${
-                                pathName === "/premium-books" ? "active !text-primary" : ""
-                            }`}
-                            scroll={true}
-                            href="/premium-books"
-                        >
-                            PREMIUM BOOKS
-                        </Link>
-
-                        {session?.data?.isSubscriber ? (
-                            <Link
-                                className={`nav-link mb-4 text-sm tracking-wider text-[#80868A] hover:text-primary transition-all !uppercase w-fit ${
-                                    pathName === "/my-subscription" ? "active !text-primary" : ""
-                                }`}
-                                href="/my-subscription"
-                            >
-                                MY SUBSCRIPTION
-                            </Link>
-                        ) : (
-                            <Link
-                                className={`nav-link mb-4 text-sm tracking-wider text-[#80868A] hover:text-primary transition-all !uppercase w-fit ${
-                                    pathName === "/subscriptions" ? "active !text-primary" : ""
-                                }`}
-                                href="/subscriptions"
-                            >
-                                SUBSCRIPTIONS
-                            </Link>
-                        )}
-
-                        {session?.data && (
-                            <Link
-                                className={`nav-link mb-4 text-sm tracking-wider text-[#80868A] hover:text-primary transition-all !uppercase w-fit ${
-                                    pathName === "/my-library" ? "active !text-primary" : ""
-                                }`}
-                                href="/my-library"
-                            >
-                                MY LIBRARY
-                            </Link>
-                        )}
-
-                        {session?.data ? (
-                            <>
-                                {session?.data?.role === "admin" ? (
-                                    <div className="flex items-center justify-center mb-2 w-full">
-                                        <button
-                                            className="bg-transparent text-[#777777] border border-[#80868A] tracking-wide font-mulish-regular p-3 px-6 transition-all duration-300 hover:scale-105 cursor-pointer w-full"
-                                            onClick={() => router.push("/admin-dashboard")}
-                                        >
-                                            <span className="font-rouben-regular uppercase">Admin Dashboard</span>
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center justify-center mb-2 w-full">
-                                        <button
-                                            className="bg-transparent text-[#777777] border border-[#80868A] tracking-wide font-mulish-regular p-3 px-6 transition-all duration-300 hover:scale-105 cursor-pointer w-full"
-                                            onClick={() => router.push("/authors-dashboard")}
-                                        >
-                                            <span className="font-rouben-regular uppercase">Writers Hub</span>
-                                        </button>
-                                    </div>
-                                )}
-
-                                <div className="flex items-center justify-center mb-2 w-full">
-                                    <button
-                                        className="bg-primary text-white tracking-wide font-mulish-regular p-3 px-6 border border-primary transition-all duration-300 hover:scale-105 cursor-pointer w-full"
-                                        onClick={logoutUser}
-                                    >
-                                        <span className="font-rouben-regular uppercase">Logout</span>
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <div className="flex items-center justify-center mb-2 w-full">
-                                    <button
-                                        className="bg-transparent text-[#777777] border border-[#80868A] tracking-wide font-mulish-regular p-3 px-6 transition-all duration-300 hover:scale-105 cursor-pointer w-full"
-                                        onClick={() => router.push("/signup")}
-                                    >
-                                        <span className="font-rouben-regular uppercase">Register</span>
-                                    </button>
-                                </div>
-
-                                <div className="flex items-center justify-center mb-2 w-full">
-                                    <button
-                                        className="bg-primary text-white border border-primary tracking-wide font-mulish-regular p-3 px-6 transition-all duration-300 hover:scale-105 cursor-pointer w-full"
-                                        onClick={() => router.push("/signin")}
-                                    >
-                                        <span className="font-rouben-regular uppercase">Sign In</span>
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </>
-            )}
 
             {/* Cart */}
             <Dialog open={cartSidebar} onClose={setCartSidebar} className="relative z-[60] font-rouben-regular">
@@ -346,14 +237,26 @@ const Navbar = ({ cartItems, setCartItems }) => {
                                     {cartItems?.length !== 0 && (
                                         <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                                             <button
-                                                className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:scale-105 cursor-pointer"
-                                                onClick={() => {
-                                                    setCurrentScreen("select_jacket");
-                                                    scrollToTop();
-                                                }}
+                                                className={`w-full bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary p-4 px-6 transition-all duration-300 ${
+                                                    isPreviewLoading ? "cursor-not-allowed opacity-90" : "cursor-pointer hover:opacity-95"
+                                                }`}
+                                                onClick={handlePreview}
+                                                disabled={isPreviewLoading}
+                                                aria-busy={isPreviewLoading}
+                                                aria-label={isPreviewLoading ? "Generating preview" : "Preview"}
                                             >
                                                 <span className="font-rouben-semi-bold uppercase flex items-center justify-center">
-                                                    <Eye className="mr-2 w-5 h-5" /> Preview
+                                                    {isPreviewLoading ? (
+                                                        <>
+                                                            <SmallSpinner marginRight="mr-4" />
+                                                            Preview
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Eye className="mr-4 w-5 h-5" />
+                                                            Preview
+                                                        </>
+                                                    )}
                                                 </span>
                                             </button>
                                         </div>
