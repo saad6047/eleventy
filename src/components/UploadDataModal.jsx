@@ -89,6 +89,7 @@ const UploadDataModal = ({ uploadDataModal, setUploadDataModal }) => {
 
             await axios.post(configSettings?.serverUrl + "/uploadPricingData", formData, {
                 headers: {
+                    "access-token": Cookies.get("access-token"),
                     "Content-Type": "multipart/form-data",
                 },
             });
@@ -123,21 +124,7 @@ const UploadDataModal = ({ uploadDataModal, setUploadDataModal }) => {
     };
 
     const downloadCurrentPricing = () => {
-        const csvUrl = `${configSettings?.serverUrl}/public/uploads/pricing_data.csv`;
-        const link = document.createElement("a");
-
-        // Set the correct filename you want to appear
-        link.download = "current_pricing.csv"; // This will be the downloaded filename
-
-        // For same-origin requests, this will work:
-        link.href = csvUrl;
-
-        // For cross-origin or to ensure it works everywhere:
-        link.href = `${csvUrl}?download=true&filename=current_pricing.csv`;
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        window.open(`${configSettings?.serverUrl}/public/uploads/pricing_data.csv`, "_blank");
     };
 
     return (
