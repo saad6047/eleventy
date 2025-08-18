@@ -678,9 +678,9 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
-                                                <option value="ABCDE">ABCDE</option>
-                                                <option value="abcde">abcde</option>
-                                                <option value="A B C D E">A B C D E</option>
+                                                <option value="Palace Script MT">Palace Script MT</option>
+                                                <option value="Aptos lowercase">Aptos lowercase</option>
+                                                <option value="Aptos uppercase">Aptos uppercase</option>
                                             </select>
                                         </div>
                                     </div>
