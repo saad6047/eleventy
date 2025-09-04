@@ -17,7 +17,7 @@ import configSettings from "../../config";
 import Spinner from "./Spinner";
 import SmallSpinner from "./SmallSpinner";
 
-const Navbar = ({ cartItems, setCartItems }) => {
+const Navbar = ({ cartItems, setCartItems, orderType }) => {
     const session = useSession();
 
     const [isPreviewLoading, setIsPreviewLoading] = useState(false);
@@ -64,14 +64,18 @@ const Navbar = ({ cartItems, setCartItems }) => {
         }, 3000);
     };
 
-    const handlePreview = async () => {
+    const handlePreview = async (orderType) => {
         try {
             setIsPreviewLoading(true);
 
             const response = await axios.post(
                 configSettings.publicServerUrl + `/previewOrder`,
                 {
-                    html: document.getElementById("pdf-block").outerHTML,
+                    html:
+                        orderType === "clothing"
+                            ? document.getElementById("pdf-block").outerHTML
+                            : document.getElementById("knitwear-pdf-block").outerHTML,
+                    orderType: orderType,
                 },
                 {
                     headers: {
@@ -240,7 +244,9 @@ const Navbar = ({ cartItems, setCartItems }) => {
                                                 className={`w-full bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary p-4 px-6 transition-all duration-300 ${
                                                     isPreviewLoading ? "cursor-not-allowed opacity-90" : "cursor-pointer hover:opacity-95"
                                                 }`}
-                                                onClick={handlePreview}
+                                                onClick={() => {
+                                                    handlePreview(orderType);
+                                                }}
                                                 disabled={isPreviewLoading}
                                                 aria-busy={isPreviewLoading}
                                                 aria-label={isPreviewLoading ? "Generating preview" : "Preview"}

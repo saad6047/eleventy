@@ -181,79 +181,23 @@ body {
     display: none;
 }
 
-.first-char-bold::first-letter {
-    color: #f10903; /* Change color */
-    font-size: 1.6em; /* Change size */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
 }
-/* 
-@layer utilities {
-    .ribbon::before,
-    .ribbon::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        width: 0;
-        height: 0;
-        border-style: solid;
+
+/* Target Firefox specifically */
+@supports (-moz-appearance: none) {
+    input[type="date"]::-moz-calendar-picker-indicator {
+        /* Hide the icon visually */
+        opacity: 0;
+        /* Ensure the icon still covers its area for click events */
+        width: 16px; /* Default Firefox icon width */
+        cursor: pointer;
     }
 
-    .ribbon::before {
-        left: -26px;
-        border-width: 30px 26px 30px 0;
-        border-color: transparent #f10903 transparent transparent;
+    /* Optional: Adjust input padding to reclaim space */
+    input[type="date"] {
+        padding-right: 8px; /* Reduce right padding */
     }
-
-    .ribbon::after {
-        right: -26px;
-        border-width: 30px 0 30px 26px;
-        border-color: transparent transparent transparent #f10903;
-    }
-} */
-
-.triangle-right {
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-left: 40px solid white;
-    border-bottom: 30px solid transparent;
-}
-
-.triangle-left {
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-right: 40px solid white;
-    border-bottom: 30px solid transparent;
-}
-
-.triangle-right-2 {
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-left: 40px solid #f10903;
-    border-bottom: 30px solid transparent;
-}
-
-.triangle-left-2 {
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-right: 40px solid #f10903;
-    border-bottom: 30px solid transparent;
-}
-
-.triangle-right-3 {
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-left: 40px solid white;
-    border-bottom: 30px solid transparent;
-}
-
-.triangle-left-3 {
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-right: 40px solid white;
-    border-bottom: 30px solid transparent;
 }

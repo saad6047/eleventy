@@ -1,4 +1,15 @@
-const jacketVestModels = ["Q75GIAQ03", "Q75GIAQ05", "Q75GIAQ01", "Q75GIAQ04", "Q75GIAQ02", "Q75GILQ01", "Q75GILQ02"];
+const jacketVestModels = [
+    "Q75GIAQ03",
+    "Q75GIAQ05",
+    "Q75GIAQ01",
+    "Q75GIAQ04",
+    "Q75GIAQ02",
+    "Q75GILQ01",
+    "Q75GILQ02",
+    "Q75ABUQ01",
+    "Q75ABUQ02",
+    "Q75ABUQ03",
+];
 const pantModels = ["Q75PANQ01", "Q75PANQ02", "Q75PANQ05", "Q75PANQ04", "Q75PANQ03"];
 
 export default function OutputForm({ form, cartItems }) {
@@ -1240,19 +1251,6 @@ export default function OutputForm({ form, cartItems }) {
                             </div>
                         </div>
 
-                        <div
-                            style={{
-                                fontSize: "0.75rem",
-                                lineHeight: "1rem",
-                                display: "flex",
-                                minHeight: "32px",
-                                maxHeight: "32px",
-                                paddingLeft: "1.5rem",
-                                borderBottom: "1px solid",
-                                borderColor: "inherit",
-                            }}
-                        ></div>
-
                         {/* ORDER # */}
                         <div
                             style={{
@@ -1277,6 +1275,34 @@ export default function OutputForm({ form, cartItems }) {
                                     }}
                                 >
                                     {form?.orderDetails?.orderNumber}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Promise date  */}
+                        <div
+                            style={{
+                                fontSize: "0.75rem",
+                                lineHeight: "1rem",
+                                display: "flex",
+                                minHeight: "32px",
+                                maxHeight: "32px",
+                                paddingLeft: "1.5rem",
+                                borderBottom: "1px solid",
+                                borderColor: "inherit",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span>PROMISE DATE </span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        marginLeft: "2rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.orderDetails?.promiseDate}
                                 </span>
                             </div>
                         </div>
