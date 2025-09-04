@@ -57,7 +57,7 @@ import knitwear_Image from "../../public/images/knitwear-product.png";
 
 import Navbar from "@/components/Navbar";
 import Popup from "@/components/Popup";
-import { fabricCodes, knitwearModels, knitwearColors, scrollToTop } from "@/utils/helpers";
+import { knitwearColors, scrollToTop } from "@/utils/helpers";
 import useSession from "@/hooks/user/get-session";
 import configSettings from "../../config";
 import OutputForm from "@/components/OutputForm";
@@ -69,6 +69,8 @@ const Home = () => {
     const session = useSession();
 
     const [uploadDataModal, setUploadDataModal] = useState(false);
+
+    const [modelsAndFabrics, setModelsAndFabrics] = useState({ clothing: { models: [], fabrics: [] }, knitwear: { models: [], fabrics: [] } });
 
     const [orderType, setOrderType] = useState("");
     const [currentScreen, setCurrentScreen] = useState("select_order_type");
@@ -417,6 +419,24 @@ const Home = () => {
         }
     };
 
+    const getAllModelsFabrics = async () => {
+        try {
+            const response = await fetch(configSettings?.serverUrl + "/getAllModelsFabrics", {
+                method: "GET",
+                headers: {
+                    "access-token": Cookies.get("access-token"),
+                },
+            });
+
+            if (!response.ok) throw new Error("Failed to fetch models and fabrics");
+
+            const data = await response.json();
+            setModelsAndFabrics(data.data);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
     // Fetch prices when selectedProduct changes
     useEffect(() => {
         const fetchPrices = async () => {
@@ -490,6 +510,10 @@ const Home = () => {
 
         fetchPrices();
     }, [knitwearProduct?.model, knitwearProduct?.fabricCode]);
+
+    useEffect(() => {
+        getAllModelsFabrics();
+    }, []);
 
     useEffect(() => {
         if (!session?.data && !session?.isLoading) {
@@ -2491,7 +2515,7 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
-                                                {fabricCodes?.map((code, index) => {
+                                                {modelsAndFabrics?.clothing?.fabrics?.map((code, index) => {
                                                     return (
                                                         <option key={index} value={code}>
                                                             {code}
@@ -2898,7 +2922,7 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
-                                                {fabricCodes?.map((code, index) => {
+                                                {modelsAndFabrics?.clothing?.fabrics?.map((code, index) => {
                                                     return (
                                                         <option key={index} value={code}>
                                                             {code}
@@ -3802,10 +3826,10 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
-                                                {knitwearModels?.map((model, index) => {
+                                                {modelsAndFabrics?.knitwear?.models?.map((model, index) => {
                                                     return (
-                                                        <option key={index} value={model.code}>
-                                                            {model.label}
+                                                        <option key={index} value={model}>
+                                                            {model}
                                                         </option>
                                                     );
                                                 })}
@@ -3828,7 +3852,13 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
-                                                <option value="MAG0Q002">MAG0Q002</option>
+                                                {modelsAndFabrics?.knitwear?.fabrics?.map((code, index) => {
+                                                    return (
+                                                        <option key={index} value={code}>
+                                                            {code}
+                                                        </option>
+                                                    );
+                                                })}
                                             </select>
                                         </div>
 
