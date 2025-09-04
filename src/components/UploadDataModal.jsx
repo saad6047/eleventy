@@ -9,7 +9,7 @@ import configSettings from "../../config";
 
 import Popup from "./Popup";
 
-const UploadDataModal = ({ uploadDataModal, setUploadDataModal }) => {
+const UploadDataModal = ({ uploadDataModal, setUploadDataModal, orderType }) => {
     const fileInputRef = useRef(null);
     const [attachedFile, setAttachedFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -86,6 +86,7 @@ const UploadDataModal = ({ uploadDataModal, setUploadDataModal }) => {
         try {
             const formData = new FormData();
             formData.append("file", attachedFile.file);
+            formData.append("orderType", orderType);
 
             await axios.post(configSettings?.serverUrl + "/uploadPricingData", formData, {
                 headers: {
@@ -124,7 +125,11 @@ const UploadDataModal = ({ uploadDataModal, setUploadDataModal }) => {
     };
 
     const downloadCurrentPricing = () => {
-        window.open(`${configSettings?.serverUrl}/public/uploads/pricing_data.csv`, "_blank");
+        if (orderType === "clothing") {
+            window.open(`${configSettings?.serverUrl}/public/uploads/pricing_data.csv`, "_blank");
+        } else {
+            window.open(`${configSettings?.serverUrl}/public/uploads/knitwear_pricing_data.csv`, "_blank");
+        }
     };
 
     return (

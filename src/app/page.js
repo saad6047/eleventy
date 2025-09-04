@@ -434,6 +434,7 @@ const Home = () => {
                         body: JSON.stringify({
                             model: selectedProduct?.model,
                             fabric: selectedProduct?.fabricCode,
+                            orderType: orderType,
                         }),
                     });
 
@@ -452,6 +453,43 @@ const Home = () => {
 
         fetchPrices();
     }, [selectedProduct?.model, selectedProduct?.fabricCode]);
+
+    // Fetch prices when knitwear product changes
+    useEffect(() => {
+        const fetchPrices = async () => {
+            if (knitwearProduct?.model && knitwearProduct?.fabricCode) {
+                try {
+                    setLoading(true);
+                    setError(null);
+
+                    const response = await fetch(configSettings?.serverUrl + "/getPrices", {
+                        method: "POST",
+                        headers: {
+                            "access-token": Cookies.get("access-token"),
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            model: knitwearProduct?.model,
+                            fabric: knitwearProduct?.fabricCode,
+                            orderType: orderType,
+                        }),
+                    });
+
+                    if (!response.ok) throw new Error("Price lookup failed");
+
+                    const data = await response.json();
+                    setPrices(data);
+                } catch (err) {
+                    setError(err.message);
+                    setPrices(null);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchPrices();
+    }, [knitwearProduct?.model, knitwearProduct?.fabricCode]);
 
     useEffect(() => {
         if (!session?.data && !session?.isLoading) {
@@ -514,7 +552,7 @@ const Home = () => {
                             <span className="font-rouben-semi-bold uppercase flex items-center justify-center">Clothing</span>
                         </button>
 
-                        {/* <button
+                        <button
                             className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                             onClick={() => {
                                 if (orderType === "clothing") {
@@ -532,10 +570,6 @@ const Home = () => {
                                 scrollToTop();
                             }}
                         >
-                            <span className="font-rouben-semi-bold uppercase flex items-center justify-center">Knitwear</span>
-                        </button> */}
-
-                        <button className="bg-gradient-to-tr w-full from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 cursor-not-allowed">
                             <span className="font-rouben-semi-bold uppercase flex items-center justify-center">Knitwear</span>
                         </button>
                     </div>
@@ -3770,8 +3804,8 @@ const Home = () => {
 
                                                 {knitwearModels?.map((model, index) => {
                                                     return (
-                                                        <option key={index} value={model}>
-                                                            {model}
+                                                        <option key={index} value={model.code}>
+                                                            {model.label}
                                                         </option>
                                                     );
                                                 })}
@@ -4224,7 +4258,7 @@ const Home = () => {
             ) : null}
 
             {/* Upload pricing data modal */}
-            <UploadDataModal uploadDataModal={uploadDataModal} setUploadDataModal={setUploadDataModal} />
+            <UploadDataModal uploadDataModal={uploadDataModal} setUploadDataModal={setUploadDataModal} orderType={orderType} />
 
             <Popup type={popupDetail?.type} text={popupDetail?.text} isPopup={isPopup} />
         </>

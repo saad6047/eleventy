@@ -1,21 +1,4 @@
-const jacketVestModels = [
-    "Q75GIAQ03",
-    "Q75GIAQ05",
-    "Q75GIAQ01",
-    "Q75GIAQ04",
-    "Q75GIAQ02",
-    "Q75GILQ01",
-    "Q75GILQ02",
-    "Q75ABUQ01",
-    "Q75ABUQ02",
-    "Q75ABUQ03",
-];
-
 export default function KnitwearOutputForm({ form, cartItems }) {
-    const getJacketsFromCart = () => {
-        return cartItems.filter((item) => jacketVestModels.includes(item.model));
-    };
-
     return (
         <>
             <style>{`
@@ -111,7 +94,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             }}
                         >
                             <div style={{ display: "flex", flex: "1", alignItems: "center", justifyContent: "center", borderRight: "1px solid" }}>
-                                <span>STYLE</span>
+                                <span>MODEL</span>
                             </div>
                             <div
                                 style={{
@@ -125,24 +108,16 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             >
                                 <span>FABRIC</span>
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <span style={{ borderRight: "1px solid", paddingRight: "12px", paddingLeft: "12px" }}>STYLE</span>
+                                    <span style={{ borderRight: "1px solid", paddingRight: "14px", paddingLeft: "12px" }}>STYLE</span>
                                     <span style={{ paddingRight: "12px", paddingLeft: "12px" }}>COLOR</span>
                                 </div>
                             </div>
                             <div
                                 style={{ display: "flex", width: "100px", alignItems: "center", justifyContent: "center", borderRight: "1px solid" }}
                             >
-                                <span>
-                                    TESTING <br /> SIZE
-                                </span>
+                                <span>TEST SIZE</span>
                             </div>
-                            <div
-                                style={{ display: "flex", width: "100px", alignItems: "center", justifyContent: "center", borderRight: "1px solid" }}
-                            >
-                                <span>
-                                    STYLE <br /> LINING
-                                </span>
-                            </div>
+
                             <div
                                 style={{
                                     display: "flex",
@@ -155,14 +130,12 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             >
                                 <span>BUTTON</span>
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <span style={{ borderRight: "1px solid", paddingRight: "12px", paddingLeft: "12px" }}>STYLE</span>
+                                    <span style={{ borderRight: "1px solid", paddingRight: "14px", paddingLeft: "12px" }}>STYLE</span>
                                     <span style={{ paddingRight: "12px", paddingLeft: "12px" }}>COLOR</span>
                                 </div>
                             </div>
                             <div style={{ display: "flex", width: "150px", alignItems: "center", justifyContent: "center" }}>
-                                <span>
-                                    HANDMADE <br /> BUTTONHOLES
-                                </span>
+                                <span>TIPPING</span>
                             </div>
                         </div>
 
@@ -191,11 +164,12 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                 <span
                                     style={{
                                         color: "#000000",
+                                        textAlign: "center",
                                         overflow: "hidden",
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[0]?.model}
+                                    {cartItems[0]?.model}
                                 </span>
                             </div>
 
@@ -225,7 +199,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         borderRight: "1px solid #000",
                                     }}
                                 >
-                                    {getJacketsFromCart()[0]?.fabricCode}
+                                    {cartItems[0]?.fabricCode}
                                 </span>
                                 <span
                                     style={{
@@ -240,7 +214,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[0]?.fabricColor}
+                                    {cartItems[0]?.fabricColor}
                                 </span>
                             </div>
 
@@ -261,30 +235,10 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[0]?.testingSize}
+                                    {cartItems[0]?.testingSize}
                                 </span>
                             </div>
 
-                            <div
-                                style={{
-                                    display: "flex",
-                                    width: "100px",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    borderRight: "1px solid",
-                                    borderColor: "inherit",
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        color: "#000000",
-                                        overflow: "hidden",
-                                        wordBreak: "break-word",
-                                    }}
-                                >
-                                    {getJacketsFromCart()[0]?.liningStyle}
-                                </span>
-                            </div>
                             <div
                                 style={{
                                     display: "flex",
@@ -311,7 +265,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         borderRight: "1px solid #000",
                                     }}
                                 >
-                                    {getJacketsFromCart()[0]?.buttonStyle}
+                                    {cartItems[0]?.buttonStyle}
                                 </span>
                                 <span
                                     style={{
@@ -326,7 +280,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[0]?.buttonColor}
+                                    {cartItems[0]?.buttonColor}
                                 </span>
                             </div>
 
@@ -345,7 +299,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[0]?.handmadeButtonholes}
+                                    {cartItems[0]?.tipping}
                                 </span>
                             </div>
                         </div>
@@ -374,11 +328,12 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                 <span
                                     style={{
                                         color: "#000000",
+                                        textAlign: "center",
                                         overflow: "hidden",
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[1]?.model}
+                                    {cartItems[1]?.model}
                                 </span>
                             </div>
 
@@ -408,7 +363,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         borderRight: "1px solid #000",
                                     }}
                                 >
-                                    {getJacketsFromCart()[1]?.fabricCode}
+                                    {cartItems[1]?.fabricCode}
                                 </span>
                                 <span
                                     style={{
@@ -423,7 +378,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[1]?.fabricColor}
+                                    {cartItems[1]?.fabricColor}
                                 </span>
                             </div>
 
@@ -444,28 +399,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[1]?.testingSize}
-                                </span>
-                            </div>
-
-                            <div
-                                style={{
-                                    display: "flex",
-                                    width: "100px",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    borderRight: "1px solid",
-                                    borderColor: "inherit",
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        color: "#000000",
-                                        overflow: "hidden",
-                                        wordBreak: "break-word",
-                                    }}
-                                >
-                                    {getJacketsFromCart()[1]?.liningStyle}
+                                    {cartItems[1]?.testingSize}
                                 </span>
                             </div>
 
@@ -495,7 +429,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         borderRight: "1px solid #000",
                                     }}
                                 >
-                                    {getJacketsFromCart()[1]?.buttonStyle}
+                                    {cartItems[1]?.buttonStyle}
                                 </span>
                                 <span
                                     style={{
@@ -510,7 +444,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[1]?.buttonColor}
+                                    {cartItems[1]?.buttonColor}
                                 </span>
                             </div>
 
@@ -529,7 +463,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[1]?.handmadeButtonholes}
+                                    {cartItems[1]?.tipping}
                                 </span>
                             </div>
                         </div>
@@ -558,11 +492,12 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                 <span
                                     style={{
                                         color: "#000000",
+                                        textAlign: "center",
                                         overflow: "hidden",
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[2]?.model}
+                                    {cartItems[2]?.model}
                                 </span>
                             </div>
 
@@ -592,7 +527,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         borderRight: "1px solid #000",
                                     }}
                                 >
-                                    {getJacketsFromCart()[2]?.fabricCode}
+                                    {cartItems[2]?.fabricCode}
                                 </span>
                                 <span
                                     style={{
@@ -607,7 +542,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[2]?.fabricColor}
+                                    {cartItems[2]?.fabricColor}
                                 </span>
                             </div>
 
@@ -628,28 +563,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[2]?.testingSize}
-                                </span>
-                            </div>
-
-                            <div
-                                style={{
-                                    display: "flex",
-                                    width: "100px",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    borderRight: "1px solid",
-                                    borderColor: "inherit",
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        color: "#000000",
-                                        overflow: "hidden",
-                                        wordBreak: "break-word",
-                                    }}
-                                >
-                                    {getJacketsFromCart()[2]?.liningStyle}
+                                    {cartItems[2]?.testingSize}
                                 </span>
                             </div>
 
@@ -679,7 +593,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         borderRight: "1px solid #000",
                                     }}
                                 >
-                                    {getJacketsFromCart()[2]?.buttonStyle}
+                                    {cartItems[2]?.buttonStyle}
                                 </span>
                                 <span
                                     style={{
@@ -694,7 +608,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[2]?.buttonColor}
+                                    {cartItems[2]?.buttonColor}
                                 </span>
                             </div>
 
@@ -713,7 +627,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {getJacketsFromCart()[2]?.handmadeButtonholes}
+                                    {cartItems[2]?.tipping}
                                 </span>
                             </div>
                         </div>
@@ -752,7 +666,20 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     borderColor: "inherit",
                                 }}
                             >
-                                <span>EMBROIDERY POSITION</span>
+                                <span>EMBROIDERY LOCATION</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span>EMBROIDERY SIDE</span>
                             </div>
 
                             <div
@@ -778,7 +705,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     borderColor: "inherit",
                                 }}
                             >
-                                <span>FONT</span>
+                                <span>EMBROIDERY FONT</span>
                             </div>
 
                             <div
@@ -789,7 +716,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     justifyContent: "center",
                                 }}
                             >
-                                <span>COLOR</span>
+                                <span>EMBROIDERY COLOR</span>
                             </div>
                         </div>
 
@@ -844,7 +771,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {form?.monogram?.side}
+                                    {form?.monogram?.location}
                                 </span>
                             </div>
 
@@ -866,11 +793,33 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                         wordBreak: "break-word",
                                     }}
                                 >
-                                    {form?.monogram?.text}
+                                    {form?.monogram?.side}
                                 </span>
                             </div>
 
                             {/* Fourth Column */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    width: "200px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    borderRight: "1px solid",
+                                    borderColor: "inherit",
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.monogram?.text}
+                                </span>
+                            </div>
+
+                            {/* Fifth Column */}
                             <div
                                 style={{
                                     display: "flex",
@@ -892,7 +841,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                 </span>
                             </div>
 
-                            {/* Fifth Column (no right border) */}
+                            {/* Sixth Column (no right border) */}
                             <div
                                 style={{
                                     display: "flex",
@@ -966,56 +915,6 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                 </span>
                             </div>
                         </div>
-
-                        {/* Attachements */}
-                        <div
-                            style={{
-                                fontSize: "0.75rem",
-                                lineHeight: "1rem",
-                                display: "flex",
-                                borderBottom: "1px solid",
-                                borderColor: "inherit",
-                                height: "40px",
-                            }}
-                        >
-                            {/* First Column */}
-                            <div
-                                style={{
-                                    display: "flex",
-                                    width: "150px",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    borderRight: "1px solid",
-                                    borderColor: "inherit",
-                                    lineHeight: "1.25rem",
-                                }}
-                            >
-                                <span>ATTACHMENTS</span>
-                            </div>
-
-                            {/* Second Column */}
-                            <div
-                                style={{
-                                    display: "flex",
-                                    flex: "1 1 0%",
-                                    alignItems: "center",
-                                    justifyContent: "flex-start",
-                                    paddingLeft: "1rem",
-                                    borderColor: "inherit",
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        fontSize: "0.75rem",
-                                        lineHeight: "1rem",
-                                        overflow: "hidden",
-                                        wordBreak: "break-word",
-                                    }}
-                                >
-                                    ATTACH PICTURE OF: FRONT, BACK, SIDE - IN COMPLIANCE WITH THE PRIVACY POLICY AVOID PICTURING THE CUSTOMER'S FACE
-                                </span>
-                            </div>
-                        </div>
                     </div>
 
                     <div
@@ -1062,19 +961,6 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             </div>
                         </div>
 
-                        <div
-                            style={{
-                                fontSize: "0.75rem",
-                                lineHeight: "1rem",
-                                display: "flex",
-                                minHeight: "32px",
-                                maxHeight: "32px",
-                                paddingLeft: "1.5rem",
-                                borderBottom: "1px solid",
-                                borderColor: "inherit",
-                            }}
-                        ></div>
-
                         {/* ORDER # */}
                         <div
                             style={{
@@ -1103,7 +989,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             </div>
                         </div>
 
-                        {/* PAGE */}
+                        {/* Promise date */}
                         <div
                             style={{
                                 fontSize: "0.75rem",
@@ -1117,43 +1003,17 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             }}
                         >
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <span>PAGE</span>
-                            </div>
-                        </div>
-
-                        {/* VITERBO'S ORDER NUMBER # */}
-                        <div
-                            style={{
-                                fontSize: "0.75rem",
-                                lineHeight: "1rem",
-                                display: "flex",
-                                minHeight: "32px",
-                                maxHeight: "32px",
-                                paddingLeft: "1.5rem",
-                                borderBottom: "1px solid",
-                                borderColor: "inherit",
-                            }}
-                        >
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <span>VITERBO'S ORDER NUMBER #</span>
-                            </div>
-                        </div>
-
-                        {/* PRICING LIST */}
-                        <div
-                            style={{
-                                fontSize: "0.75rem",
-                                lineHeight: "1rem",
-                                display: "flex",
-                                minHeight: "32px",
-                                maxHeight: "32px",
-                                paddingLeft: "1.5rem",
-                                borderBottom: "1px solid",
-                                borderColor: "inherit",
-                            }}
-                        >
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <span>PRICING LIST</span>
+                                <span>PROMISE DATE</span>
+                                <span
+                                    style={{
+                                        color: "#000000",
+                                        marginLeft: "2rem",
+                                        overflow: "hidden",
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {form?.orderDetails?.promiseDate}
+                                </span>
                             </div>
                         </div>
 
@@ -1185,7 +1045,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             </div>
                         </div>
 
-                        {/* BOUTIQUE DELIVERY ADDRESS */}
+                        {/* SHIPPING ADDRESS */}
                         <div
                             style={{
                                 fontSize: "0.75rem",
@@ -1199,7 +1059,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             }}
                         >
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <span>BOUTIQUE DELIVERY ADDRESS</span>
+                                <span>FINAL SHIPPING ADDRESS</span>
                             </div>
                         </div>
 
@@ -1217,18 +1077,17 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             }}
                         ></div>
 
-                        {/* Final empty row with different height */}
+                        {/* Empty row with text-sm */}
                         <div
                             style={{
                                 fontSize: "0.875rem",
                                 lineHeight: "1.25rem",
                                 display: "flex",
-                                minHeight: "26px",
-                                maxHeight: "26px",
+                                minHeight: "50px",
+                                maxHeight: "50px",
                                 paddingLeft: "1.5rem",
                                 borderBottom: "1px solid",
                                 borderColor: "inherit",
-                                boxSizing: "border-box",
                             }}
                         ></div>
                     </div>
@@ -1259,28 +1118,41 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             borderRight: "1px solid",
                             borderBottom: "1px solid",
                             borderColor: "inherit",
+                            justifyContent: "space-between",
                         }}
                     >
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
-                                <p>*1</p>
-                                <p>Jacket Length</p>
+                            <div style={{ display: "flex", alignItems: "start", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>A</p>
+                                <p>
+                                    Sholder width <br /> <span style={{ fontSize: "10px" }}>(lying on table)</span>
+                                </p>
                             </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/jacket-length.png`} style={{ width: "70px" }} />
-                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
-                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-1.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginBottom: "20px" }}>Cm</p>
                                     <p
                                         style={{
+                                            margin: 0, // remove default margins
+                                            padding: 0,
                                             borderBottom: "1px dashed #6b7280",
                                             textAlign: "center",
                                         }}
-                                    >
-                                        {form?.jacketDetails?.jacketLength && (
-                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.jacketLength}</span>
-                                        )}
-                                    </p>
+                                    ></p>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p
+                                        style={{
+                                            margin: 0,
+                                            padding: 0,
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    ></p>
                                 </div>
                             </div>
                         </div>
@@ -1296,28 +1168,39 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             paddingRight: "1rem",
                             borderRight: "1px solid",
                             borderBottom: "1px solid",
+                            justifyContent: "space-between",
                         }}
                     >
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
-                                <p>*2</p>
-                                <p>Sleeve Length</p>
+                            <div style={{ display: "flex", alignItems: "start", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>B</p>
+                                <p>Body length</p>
                             </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/sleeve-length.png`} style={{ width: "70px" }} />
-                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
-                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-2.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginBottom: "20px" }}>Cm</p>
                                     <p
                                         style={{
+                                            margin: 0, // remove default margins
+                                            padding: 0,
                                             borderBottom: "1px dashed #6b7280",
                                             textAlign: "center",
                                         }}
-                                    >
-                                        {form?.jacketDetails?.sleeveLength && (
-                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.sleeveLength}</span>
-                                        )}
-                                    </p>
+                                    ></p>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p
+                                        style={{
+                                            margin: 0,
+                                            padding: 0,
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    ></p>
                                 </div>
                             </div>
                         </div>
@@ -1333,31 +1216,39 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             paddingRight: "1rem",
                             borderRight: "1px solid",
                             borderBottom: "1px solid",
+                            justifyContent: "space-between",
                         }}
                     >
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
-                                <p>*3</p>
-                                <p>Half-Waist Circumference</p>
+                            <div style={{ display: "flex", alignItems: "start", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>C</p>
+                                <p>Sleeve length</p>
                             </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <img
-                                src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/half-waist-circumference.png`}
-                                style={{ width: "70px", aspectRatio: "3/4.5" }}
-                            />
-                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
-                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-3.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginBottom: "20px" }}>Cm</p>
                                     <p
                                         style={{
+                                            margin: 0, // remove default margins
+                                            padding: 0,
                                             borderBottom: "1px dashed #6b7280",
                                             textAlign: "center",
                                         }}
-                                    >
-                                        {form?.jacketDetails?.halfWaistCircumference && (
-                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.halfWaistCircumference}</span>
-                                        )}
-                                    </p>
+                                    ></p>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p
+                                        style={{
+                                            margin: 0,
+                                            padding: 0,
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    ></p>
                                 </div>
                             </div>
                         </div>
@@ -1373,28 +1264,41 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             paddingRight: "1rem",
                             borderRight: "1px solid",
                             borderBottom: "1px solid",
+                            justifyContent: "space-between",
                         }}
                     >
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
-                                <p>*4</p>
-                                <p>Total Shoulder Width</p>
+                            <div style={{ display: "flex", alignItems: "start", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>D</p>
+                                <p>
+                                    Chest measurement lying flat on the table <span style={{ fontSize: "10px" }}>(armhole intersection)</span>
+                                </p>
                             </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/total-shoulder-width.png`} style={{ width: "70px" }} />
-                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
-                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-4.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginBottom: "20px" }}>Cm</p>
                                     <p
                                         style={{
+                                            margin: 0, // remove default margins
+                                            padding: 0,
                                             borderBottom: "1px dashed #6b7280",
                                             textAlign: "center",
                                         }}
-                                    >
-                                        {form?.jacketDetails?.totalShoulderWidth && (
-                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.totalShoulderWidth}</span>
-                                        )}
-                                    </p>
+                                    ></p>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p
+                                        style={{
+                                            margin: 0,
+                                            padding: 0,
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    ></p>
                                 </div>
                             </div>
                         </div>
@@ -1410,18 +1314,22 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             paddingRight: "1rem",
                             borderRight: "1px solid",
                             borderBottom: "1px solid",
+                            justifyContent: "space-between",
                         }}
                     >
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
-                                <p>5</p>
-                                <p>Shoulder's Difference</p>
+                            <div style={{ display: "flex", alignItems: "start", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                                <p>E</p>
+                                <p>
+                                    Half waist <br /> <span style={{ fontSize: "10px" }}>(20 cm under the arm)</span>
+                                </p>
                             </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/shoulder-difference.png`} style={{ width: "70px" }} />
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-5.png`} style={{ width: "70px" }} />
                             <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
                                 <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginBottom: "20px" }}>Cm</p>
                                     <p
                                         style={{
                                             margin: 0, // remove default margins
@@ -1429,14 +1337,10 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                             borderBottom: "1px dashed #6b7280",
                                             textAlign: "center",
                                         }}
-                                    >
-                                        {form?.jacketDetails?.shouldersDifference?.rightCmLess && (
-                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.shouldersDifference?.rightCmLess}</span>
-                                        )}
-                                    </p>
-                                    <p style={{ fontSize: "10px", marginTop: "4px" }}>Less Right</p>
+                                    ></p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
                                     <p
                                         style={{
                                             margin: 0,
@@ -1444,12 +1348,7 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                             borderBottom: "1px dashed #6b7280",
                                             textAlign: "center",
                                         }}
-                                    >
-                                        {form?.jacketDetails?.shouldersDifference?.leftCmLess && (
-                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.shouldersDifference?.leftCmLess}</span>
-                                        )}
-                                    </p>
-                                    <p style={{ fontSize: "10px", marginTop: "4px" }}>Less Left</p>
+                                    ></p>
                                 </div>
                             </div>
                         </div>
@@ -1465,28 +1364,41 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                             paddingRight: "1rem",
                             borderRight: "1px solid",
                             borderBottom: "1px solid",
+                            justifyContent: "space-between",
                         }}
                     >
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
+                            <div style={{ display: "flex", alignItems: "start", marginBottom: "1rem", gap: "0.5rem", fontSize: "0.75rem" }}>
                                 <p>6</p>
-                                <p>Remove Crease Under Collar</p>
+                                <p>
+                                    Muscle circumference (total) <br /> <span style={{ fontSize: "10px" }}>(from 2 cm below the arm)</span>
+                                </p>
                             </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/crease-under-collar.png`} style={{ width: "70px" }} />
-                            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", fontSize: "0.75rem" }}>
-                                <div style={{ display: "flex", flexDirection: "column", width: "60px" }}>
+                            <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-6.png`} style={{ width: "70px" }} />
+                            <div style={{ display: "flex", flexDirection: "column", fontSize: "0.75rem" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginBottom: "20px" }}>Cm</p>
                                     <p
                                         style={{
+                                            margin: 0, // remove default margins
+                                            padding: 0,
                                             borderBottom: "1px dashed #6b7280",
                                             textAlign: "center",
                                         }}
-                                    >
-                                        {form?.jacketDetails?.removeCreaseUnderCollar && (
-                                            <span style={{ color: "#000000" }}>CM {form?.jacketDetails?.removeCreaseUnderCollar}</span>
-                                        )}
-                                    </p>
+                                    ></p>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p
+                                        style={{
+                                            margin: 0,
+                                            padding: 0,
+                                            borderBottom: "1px dashed #6b7280",
+                                            textAlign: "center",
+                                        }}
+                                    ></p>
                                 </div>
                             </div>
                         </div>
