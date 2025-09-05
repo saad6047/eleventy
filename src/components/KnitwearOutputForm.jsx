@@ -1144,7 +1144,8 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     ></p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
-                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "2px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px" }}>{form?.measurements?.shoulderWidth}</p>
                                     <p
                                         style={{
                                             margin: 0,
@@ -1192,7 +1193,8 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     ></p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
-                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "2px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px" }}>{form?.measurements?.bodyLength}</p>
                                     <p
                                         style={{
                                             margin: 0,
@@ -1240,7 +1242,8 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     ></p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
-                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "2px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px" }}>{form?.measurements?.sleeveLength}</p>
                                     <p
                                         style={{
                                             margin: 0,
@@ -1290,7 +1293,8 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     ></p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
-                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "2px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px" }}>{form?.measurements?.chestMeasurement}</p>
                                     <p
                                         style={{
                                             margin: 0,
@@ -1340,7 +1344,8 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     ></p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
-                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "2px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px" }}>{form?.measurements?.halfWaist}</p>
                                     <p
                                         style={{
                                             margin: 0,
@@ -1390,7 +1395,8 @@ export default function KnitwearOutputForm({ form, cartItems }) {
                                     ></p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "column", width: "70px" }}>
-                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "20px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px", marginTop: "20px", marginBottom: "2px" }}>+ / -</p>
+                                    <p style={{ fontSize: "10px" }}>{form?.measurements?.muscleCircumference}</p>
                                     <p
                                         style={{
                                             margin: 0,

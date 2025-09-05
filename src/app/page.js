@@ -111,6 +111,7 @@ const Home = () => {
     const [knitwearForm, setKnitwearForm] = useState({
         orderDetails: { date: "", store: "", associate: "", clientName: "", orderNumber: "" },
         monogram: { required: "Yes", text: "", location: "", side: "", color: "", font: "" },
+        measurements: { shoulderWidth: "", bodyLength: "", sleeveLength: "", chestMeasurement: "", halfWaist: "", muscleCircumference: "" },
         additionalNotes: "",
     });
 
@@ -409,6 +410,7 @@ const Home = () => {
             setKnitwearForm({
                 orderDetails: { date: "", store: "", associate: "", clientName: "", orderNumber: "" },
                 monogram: { required: "Yes", text: "", location: "Wrist", side: "", color: "", font: "" },
+                measurements: { shoulderWidth: "", bodyLength: "", sleeveLength: "", chestMeasurement: "", halfWaist: "", muscleCircumference: "" },
                 additionalNotes: "",
             });
 
@@ -583,6 +585,14 @@ const Home = () => {
                                     setKnitwearForm({
                                         orderDetails: { date: "", store: "", associate: "", clientName: "", orderNumber: "" },
                                         monogram: { required: "Yes", text: "", location: "Wrist", side: "", color: "", font: "" },
+                                        measurements: {
+                                            shoulderWidth: "",
+                                            bodyLength: "",
+                                            sleeveLength: "",
+                                            chestMeasurement: "",
+                                            halfWaist: "",
+                                            muscleCircumference: "",
+                                        },
                                         additionalNotes: "",
                                     });
 
@@ -2688,7 +2698,7 @@ const Home = () => {
                                             <input
                                                 type="text"
                                                 className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                                value={loading ? "Loading..." : error ? "Price unavailable" : prices?.usaPrice || ""}
+                                                value={loading ? "Loading..." : error ? "Item Unavailable" : prices?.usaPrice || ""}
                                                 readOnly
                                             />
                                         </div>
@@ -2699,7 +2709,7 @@ const Home = () => {
                                             <input
                                                 type="text"
                                                 className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                                value={loading ? "Loading..." : error ? "Price unavailable" : prices?.caPrice || ""}
+                                                value={loading ? "Loading..." : error ? "Item Unavailable" : prices?.caPrice || ""}
                                                 readOnly
                                             />
                                         </div>
@@ -3001,7 +3011,7 @@ const Home = () => {
                                             <input
                                                 type="text"
                                                 className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                                value={loading ? "Loading..." : error ? "Price unavailable" : prices?.usaPrice || ""}
+                                                value={loading ? "Loading..." : error ? "Item Unavailable" : prices?.usaPrice || ""}
                                                 readOnly
                                             />
                                         </div>
@@ -3012,7 +3022,7 @@ const Home = () => {
                                             <input
                                                 type="text"
                                                 className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                                value={loading ? "Loading..." : error ? "Price unavailable" : prices?.caPrice || ""}
+                                                value={loading ? "Loading..." : error ? "Item Unavailable" : prices?.caPrice || ""}
                                                 readOnly
                                             />
                                         </div>
@@ -3749,7 +3759,7 @@ const Home = () => {
                                                 const isValid = validateMonogramDetails();
 
                                                 if (isValid) {
-                                                    setCurrentScreen("add_knitwear_product");
+                                                    setCurrentScreen("knitwear_measurements");
                                                     scrollToTop();
                                                 }
                                             }}
@@ -3758,6 +3768,232 @@ const Home = () => {
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    ) : currentScreen === "knitwear_measurements" ? (
+                        <div className="relative flex flex-col max-w-4xl w-full mx-auto py-12 px-4 pt-4">
+                            <h1 className="text-3xl md:text-4xl font-rouben-bold text-[#313131] text-center mt-12 mb-8">Measurements</h1>
+
+                            <div className="grid md:grid-cols-3 divide-x divide-y divide-black mt-2 max-w-[1100px] mx-auto">
+                                <div className="flex flex-col p-2 px-4 justify-between border-l border-t border-b-0 md:border-b">
+                                    <div className="flex flex-col">
+                                        <div className="flex items-start mb-4 gap-2 text-xs">
+                                            <p>A</p>
+                                            <p>
+                                                Sholder width <br /> <span className="text-[10px]">(lying on table)</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-1.png`} className="w-[120px]" />
+                                        <div className="flex flex-col text-xs">
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mb-5">Cm</p>
+                                                <p className="m-0 p-0 border-b border-dashed border-gray-500 text-center"></p>
+                                            </div>
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mt-5 mb-2">+ / -</p>
+                                                <input
+                                                    className="text-[10px] m-0 p-0 border-b border-dashed border-gray-500 text-center outline-none"
+                                                    value={knitwearForm?.measurements?.shoulderWidth}
+                                                    onChange={(e) => {
+                                                        setKnitwearForm({
+                                                            ...knitwearForm,
+                                                            measurements: { ...knitwearForm?.measurements, shoulderWidth: e.target.value },
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col p-2 px-4 justify-between border-t border-l md:border-l-0 border-b-0 md:border-b">
+                                    <div className="flex flex-col">
+                                        <div className="flex items-start mb-4 gap-2 text-xs">
+                                            <p>B</p>
+                                            <p>Body length</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-2.png`} className="w-[120px]" />
+                                        <div className="flex flex-col text-xs">
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mb-5">Cm</p>
+                                                <p className="m-0 p-0 border-b border-dashed border-gray-500 text-center"></p>
+                                            </div>
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mt-5 mb-2">+ / -</p>
+                                                <input
+                                                    className="text-[10px] m-0 p-0 border-b border-dashed border-gray-500 text-center outline-none"
+                                                    value={knitwearForm?.measurements?.bodyLength}
+                                                    onChange={(e) => {
+                                                        setKnitwearForm({
+                                                            ...knitwearForm,
+                                                            measurements: { ...knitwearForm?.measurements, bodyLength: e.target.value },
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col p-2 px-4 justify-between border-t border-l md:border-l-0">
+                                    <div className="flex flex-col">
+                                        <div className="flex items-start mb-4 gap-2 text-xs">
+                                            <p>C</p>
+                                            <p>Sleeve length</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-3.png`} className="w-[120px]" />
+                                        <div className="flex flex-col text-xs">
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mb-5">Cm</p>
+                                                <p className="m-0 p-0 border-b border-dashed border-gray-500 text-center"></p>
+                                            </div>
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mt-5 mb-2">+ / -</p>
+                                                <input
+                                                    className="text-[10px] m-0 p-0 border-b border-dashed border-gray-500 text-center outline-none"
+                                                    value={knitwearForm?.measurements?.sleeveLength}
+                                                    onChange={(e) => {
+                                                        setKnitwearForm({
+                                                            ...knitwearForm,
+                                                            measurements: { ...knitwearForm?.measurements, sleeveLength: e.target.value },
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col p-2 px-4 justify-between border-l">
+                                    <div className="flex flex-col">
+                                        <div className="flex items-start mb-4 gap-2 text-xs">
+                                            <p>D</p>
+                                            <p>
+                                                Chest measurement lying flat on the table <span className="text-[10px]">(armhole intersection)</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-4.png`} className="w-[120px]" />
+                                        <div className="flex flex-col text-xs">
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mb-5">Cm</p>
+                                                <p className="m-0 p-0 border-b border-dashed border-gray-500 text-center"></p>
+                                            </div>
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mt-5 mb-2">+ / -</p>
+                                                <input
+                                                    className="text-[10px] m-0 p-0 border-b border-dashed border-gray-500 text-center outline-none"
+                                                    value={knitwearForm?.measurements?.chestMeasurement}
+                                                    onChange={(e) => {
+                                                        setKnitwearForm({
+                                                            ...knitwearForm,
+                                                            measurements: { ...knitwearForm?.measurements, chestMeasurement: e.target.value },
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col p-2 px-4 justify-between border-l md:border-l-0">
+                                    <div className="flex flex-col">
+                                        <div className="flex items-start mb-4 gap-2 text-xs">
+                                            <p>E</p>
+                                            <p>
+                                                Half waist <br /> <span className="text-[10px]">(20 cm under the arm)</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-5.png`} className="w-[120px]" />
+                                        <div className="flex flex-col text-xs">
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mb-5">Cm</p>
+                                                <p className="m-0 p-0 border-b border-dashed border-gray-500 text-center"></p>
+                                            </div>
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mt-5 mb-2">+ / -</p>
+                                                <input
+                                                    className="text-[10px] m-0 p-0 border-b border-dashed border-gray-500 text-center outline-none"
+                                                    value={knitwearForm?.measurements?.halfWaist}
+                                                    onChange={(e) => {
+                                                        setKnitwearForm({
+                                                            ...knitwearForm,
+                                                            measurements: { ...knitwearForm?.measurements, halfWaist: e.target.value },
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col p-2 px-4 justify-between border-b border-r border-l md:border-l-0">
+                                    <div className="flex flex-col">
+                                        <div className="flex items-start mb-4 gap-2 text-xs">
+                                            <p>6</p>
+                                            <p>
+                                                Muscle circumference (total) <br /> <span className="text-[10px]">(from 2 cm below the arm)</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <img src={`${process.env.NEXT_PUBLIC_BASE_URL}/images/knitwear-6.png`} className="w-[120px]" />
+                                        <div className="flex flex-col text-xs">
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mb-5">Cm</p>
+                                                <p className="m-0 p-0 border-b border-dashed border-gray-500 text-center"></p>
+                                            </div>
+                                            <div className="flex flex-col w-[70px]">
+                                                <p className="text-[10px] mt-5 mb-2">+ / -</p>
+                                                <input
+                                                    className="text-[10px] m-0 p-0 border-b border-dashed border-gray-500 text-center outline-none"
+                                                    value={knitwearForm?.measurements?.muscleCircumference}
+                                                    onChange={(e) => {
+                                                        setKnitwearForm({
+                                                            ...knitwearForm,
+                                                            measurements: { ...knitwearForm?.measurements, muscleCircumference: e.target.value },
+                                                        });
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-end mt-5 gap-2">
+                                <button
+                                    className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
+                                    onClick={() => {
+                                        setCurrentScreen("monogram");
+                                        scrollToTop();
+                                    }}
+                                >
+                                    <span className="font-rouben-semi-bold uppercase">Back</span>
+                                </button>
+
+                                <button
+                                    className="bg-gradient-to-tr from-primary to-[#095eb9] text-white text-sm border border-primary tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
+                                    onClick={() => {
+                                        const isValid = validateMonogramDetails();
+
+                                        if (isValid) {
+                                            setCurrentScreen("add_knitwear_product");
+                                            scrollToTop();
+                                        }
+                                    }}
+                                >
+                                    <span className="font-rouben-semi-bold uppercase">Continue</span>
+                                </button>
                             </div>
                         </div>
                     ) : currentScreen === "add_knitwear_product" ? (
@@ -3782,7 +4018,7 @@ const Home = () => {
                                     <button
                                         className="bg-[#98A1AE] text-white text-sm border border-[#98A1AE] tracking-wide font-mulish-regular p-4 px-6 transition-all duration-300 hover:opacity-95 cursor-pointer"
                                         onClick={() => {
-                                            setCurrentScreen("monogram");
+                                            setCurrentScreen("knitwear_measurements");
                                             scrollToTop();
                                         }}
                                     >
@@ -3955,6 +4191,8 @@ const Home = () => {
 
                                                 <option value="ART 277450">ART 277450</option>
                                                 <option value="ART TRC6882LU​">ART TRC6882LU​</option>
+                                                <option value="ART TRC6882LU​">ART 267755</option>
+                                                <option value="ART TRC6882LU​">ART 270198</option>
                                             </select>
                                         </div>
 
@@ -3989,7 +4227,7 @@ const Home = () => {
                                             <input
                                                 type="text"
                                                 className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                                value={loading ? "Loading..." : error ? "Price unavailable" : prices?.usaPrice || ""}
+                                                value={loading ? "Loading..." : error ? "Item Unavailable" : prices?.usaPrice || ""}
                                                 readOnly
                                             />
                                         </div>
@@ -4000,7 +4238,7 @@ const Home = () => {
                                             <input
                                                 type="text"
                                                 className="flex-1 w-full bg-white border border-gray-200 custom-shadow p-5 rounded-[4px] text-[#5C6469] outline-none cursor-not-allowed"
-                                                value={loading ? "Loading..." : error ? "Price unavailable" : prices?.caPrice || ""}
+                                                value={loading ? "Loading..." : error ? "Item Unavailable" : prices?.caPrice || ""}
                                                 readOnly
                                             />
                                         </div>
