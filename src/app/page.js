@@ -4189,6 +4189,7 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
+                                                <option value="N/A">N/A</option>
                                                 <option value="ART 277450">ART 277450</option>
                                                 <option value="ART TRC6882LU​">ART TRC6882LU​</option>
                                                 <option value="ART TRC6882LU​">ART 267755</option>
@@ -4210,6 +4211,7 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
+                                                <option value="N/A">N/A</option>
                                                 <option value="010">010</option>
                                                 <option value="VRC30">VRC30</option>
                                                 <option value="CDP4DS">CDP4DS</option>
