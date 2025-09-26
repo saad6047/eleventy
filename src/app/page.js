@@ -2549,21 +2549,32 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
-                                                <option value="00 – WHITE">00 – WHITE</option>
-                                                <option value="01 – IVORY">01 – IVORY</option>
-                                                <option value="02 – SAND">02 – SAND</option>
-                                                <option value="03 – TAUPE">03 – TAUPE</option>
-                                                <option value="04 – CAMEL">04 – CAMEL</option>
+                                                <option value="00 - CREAM">00 - CREAM</option>
+                                                <option value="01- IVORY">01- IVORY</option>
+                                                <option value="02 - SAND">02 - SAND</option>
+                                                <option value="03- TAUPE">03- TAUPE</option>
+                                                <option value="04 – CAMEL">04 - CAMEL</option>
                                                 <option value="05 - BROWN">05 - BROWN</option>
                                                 <option value="06 – GREY">06 – GREY</option>
                                                 <option value="07 – GREEN">07 – GREEN</option>
+                                                <option value="07NN - NEW GREEN">07NN - NEW GREEN</option>
+                                                <option value="08N - NEW LT BLUE">08N - NEW LT BLUE</option>
+                                                <option value="08NN - MELANGE LT BLUE">08NN - MELANGE LT BLUE</option>
                                                 <option value="08 – LT BLUE">08 – LT BLUE</option>
                                                 <option value="11 – NAVY">11 – NAVY</option>
-                                                <option value="13 – MED GREY">13 – MED GREY</option>
-                                                <option value="14 – LT GREY">14 – LT GREY</option>
-                                                <option value="15 – DRK GREY">15 – DRK GREY</option>
-                                                <option value="18 – RED">18 – RED</option>
-                                                <option value="22 - BLACK">22 - BLACK</option>
+                                                <option value="11N - NEW NAVY">11N - NEW NAVY</option>
+                                                <option value="13N - MELANGE LT GREY">13N - MELANGE LT GREY</option>
+                                                <option value="13 - LT GREY">13 - LT GREY</option>
+                                                <option value="14- DARK GREY">14- DARK GREY</option>
+                                                <option value="15- CHARCOAL">15- CHARCOAL</option>
+                                                <option value="22- BLACK">22- BLACK</option>
+                                                <option value="25N - COCOA ">25N - COCOA </option>
+                                                <option value="25- CHOCOLATE">25- CHOCOLATE</option>
+                                                <option value="80 - BERRY">80 - BERRY</option>
+                                                <option value="81 - CLAY">81 - CLAY</option>
+                                                <option value="83 - CEMENT">83 - CEMENT</option>
+                                                <option value="84 - BOROLO">84 - BOROLO</option>
+                                                <option value="157 - VICUNA ">157 - VICUNA </option>
                                             </select>
                                         </div>
                                     </div>
@@ -2956,21 +2967,32 @@ const Home = () => {
                                                     Please Select
                                                 </option>
 
-                                                <option value="00 – WHITE">00 – WHITE</option>
-                                                <option value="01 – IVORY">01 – IVORY</option>
-                                                <option value="02 – SAND">02 – SAND</option>
-                                                <option value="03 – TAUPE">03 – TAUPE</option>
-                                                <option value="04 – CAMEL">04 – CAMEL</option>
+                                                <option value="00 - CREAM">00 - CREAM</option>
+                                                <option value="01- IVORY">01- IVORY</option>
+                                                <option value="02 - SAND">02 - SAND</option>
+                                                <option value="03- TAUPE">03- TAUPE</option>
+                                                <option value="04 – CAMEL">04 - CAMEL</option>
                                                 <option value="05 - BROWN">05 - BROWN</option>
                                                 <option value="06 – GREY">06 – GREY</option>
                                                 <option value="07 – GREEN">07 – GREEN</option>
+                                                <option value="07NN - NEW GREEN">07NN - NEW GREEN</option>
+                                                <option value="08N - NEW LT BLUE">08N - NEW LT BLUE</option>
+                                                <option value="08NN - MELANGE LT BLUE">08NN - MELANGE LT BLUE</option>
                                                 <option value="08 – LT BLUE">08 – LT BLUE</option>
                                                 <option value="11 – NAVY">11 – NAVY</option>
-                                                <option value="13 – MED GREY">13 – MED GREY</option>
-                                                <option value="14 – LT GREY">14 – LT GREY</option>
-                                                <option value="15 – DRK GREY">15 – DRK GREY</option>
-                                                <option value="18 – RED">18 – RED</option>
-                                                <option value="22 - BLACK">22 - BLACK</option>
+                                                <option value="11N - NEW NAVY">11N - NEW NAVY</option>
+                                                <option value="13N - MELANGE LT GREY">13N - MELANGE LT GREY</option>
+                                                <option value="13 - LT GREY">13 - LT GREY</option>
+                                                <option value="14- DARK GREY">14- DARK GREY</option>
+                                                <option value="15- CHARCOAL">15- CHARCOAL</option>
+                                                <option value="22- BLACK">22- BLACK</option>
+                                                <option value="25N - COCOA ">25N - COCOA </option>
+                                                <option value="25- CHOCOLATE">25- CHOCOLATE</option>
+                                                <option value="80 - BERRY">80 - BERRY</option>
+                                                <option value="81 - CLAY">81 - CLAY</option>
+                                                <option value="83 - CEMENT">83 - CEMENT</option>
+                                                <option value="84 - BOROLO">84 - BOROLO</option>
+                                                <option value="157 - VICUNA ">157 - VICUNA </option>
                                             </select>
                                         </div>
                                     </div>
